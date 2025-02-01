@@ -135,7 +135,7 @@ body {
 	position: relative;
 	border-radius: 12px 12px 0 0;
 	width: 100%;
-    padding-top: 56.25%; /* hack for aspect ratio*/
+    aspect-ratio: 16 / 9;
 	box-sizing: border-box;
 	background-color: 2f2e30;
 	transition: background-size 0.1s ease;
@@ -143,9 +143,6 @@ body {
 }
 .thumb > img {
 	display: block;
-	position: absolute;
-	top: 0;
-	left: 0;
 	width: 100%;
 	color: #f2f2ff;
 	transition: transform 0.1s ease;
@@ -409,7 +406,8 @@ const dsnBlot = gbId("dsn-blot");
 const viz = {cellSize: undefined, nrows: undefined, ncols: undefined,
 			 lifeGrid: undefined, lastLifeGrid: undefined, dripColumns: undefined,
 			 /*bottomTouchesLeft: 5*/};
-const faderRows = 0;
+const fadedRows = 3;
+const blockedRows = 0;
 /* 
   create state grids for each visualization (2d arrays)
   grid can only be as big as the max possible canvas size (based on screen size)
@@ -513,7 +511,7 @@ function devHover(event) {
 	const h = devBlot.height;
 	function tryAddLife(row, col) {
 		// don't set bottom rows, unless it's their first time(s)
-		if (row < viz.nrows - faderRows) {
+		if (row < viz.nrows - blockedRows) {
 			viz.lifeGrid[row][col] = 1; // set alive
 			if (row == viz.nrows - 1)
 				tryInitNewDrip(col);
@@ -555,18 +553,22 @@ function devHover(event) {
 */
 function renderDev() {
 	// get canvas drawing context
-	const devCtx = devBlot.getContext("2d");
+	const devCtx = devBlot.getContext('2d');
 	// set font for GOL display
-	devCtx.font = viz.cellSize + "px monospace";
-	devCtx.textBaseline = "top";
-	const txtMetrics = devCtx.measureText("0");
+	devCtx.font = viz.cellSize + 'px monospace';
+	devCtx.textBaseline = 'top';
+	const txtMetrics = devCtx.measureText('0');
 	const txtOffW = (viz.cellSize - txtMetrics.width) / 2;
 	const txtOffH = (viz.cellSize - Math.abs(txtMetrics.alphabeticBaseline)) / 2;
-	function colorGrade(amt) {
-		//	background-color: #171619;
-		//  deadColor = "#383850";
-		const newCol = 0x383850 - 0x07070A * (faderRows - amt);
-		return "#" + newCol.toString(16);
+	function colorGrade(y) {
+		if (y > fadedRows)
+			return '#383850';
+		else if (y == 0)
+			return '#A2A2AA';
+		else {
+			const newCol = 0x383850 - 0x07070A * (fadedRows - y);
+			return '#' + newCol.toString(16);
+		}
 	}
 	// draw from bottom so grid aligns at half
 	for (let y = 0; y < viz.nrows; y++) {
@@ -581,8 +583,8 @@ function renderDev() {
 								viz.cellSize, viz.cellSize);
 			// draw green 1 or grey 0 depending on cell state 
 			const cChar = y == 0 ? (cell ? '!' : '?') : cell; // special ! for bottom row
-			const lifeColor = y == 0 ? "#A02C7A" : "#0E6C3A"; // special color for bottom row
-			const deadColor = y > faderRows ? "#383850" : colorGrade(y); // bottom rows get lighter
+			const lifeColor = y == 0 ? '#C42D94' : '#0E6C3A'; // special color for bottom row
+			const deadColor = colorGrade(y); // bottom rows get lighter
 			devCtx.fillStyle = cell == 1 ? lifeColor : deadColor;
 			devCtx.fillText(cChar, x * viz.cellSize + txtOffW,
 							devBlot.height - (y + 1) * viz.cellSize + txtOffH);
@@ -593,7 +595,7 @@ function renderDev() {
 
 function renderDesign() {
 	// get canvas drawing context
-	const dsnCtx = dsnBlot.getContext("2d");
+	const dsnCtx = dsnBlot.getContext('2d');
 	dsnCtx.clearRect(0, 0, dsnBlot.width, dsnBlot.height);
 	// design canvas drawin'
 	// draw all prevs first (in background)
