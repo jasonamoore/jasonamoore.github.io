@@ -1,0 +1,211 @@
+<html>
+
+<head>
+
+<title>Jason Moore</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+
+<style>
+
+body {
+	margin: 0;
+	font-family: Helvetica, sans-serif;
+	color: #fff;
+}
+
+#page-wrap {
+	width: 100%;
+	height: 100%;
+	background-color: #171619;
+}
+
+.half {
+	position: relative;
+	width: 100%;
+	height: 50%;
+	box-sizing: border-box;
+}
+#top-half {
+	/*border-bottom: 1px solid #ccc;*/
+}
+#top-half > span {
+	margin-left: 50px;
+	position: absolute;
+	bottom: 10px;
+}
+#bottom-half {
+	/*border-top: 1px solid #ccc;*/
+}
+#bottom-half > span {
+	margin-left: 50px;
+	position: absolute;
+	top: 10px;
+}
+.half > span {
+	z-index: 10;
+	font-size: max(36px, 5vw);
+	font-weight: bold;
+}
+
+canvas {
+	position: absolute;
+}
+
+#right-bar {
+	position: absolute;
+	top: 20px;
+	bottom: 20px;
+	right: 10%;
+	width: 25%;
+	min-width: 200px;
+	padding: 25px;
+	background-color: rgba(255, 255, 255, 0.3);
+	overflow: auto;
+}
+
+.thumb:nth-of-type(1) {
+	margin-top: 0;
+}
+.thumb {
+	margin-top: 20px;
+}
+
+.thumb > img {
+	width: 100%;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="page-wrap">
+	
+	<div id="top-half" class="half"><span>Development</span><canvas id="dev-blot"></canvas></div>
+	<div id="bottom-half" class="half"><span>Design</span><canvas id="dsn-blot"></canvas></div>
+	
+	<div id="right-bar">
+		<div class="thumb"><img src="placeholder.png" /><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></div>
+		<div class="thumb"><img src="placeholder.png" /><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></div>
+		<div class="thumb"><img src="placeholder.png" /><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></div>
+	</div>
+	
+</div>
+
+<script>
+
+function gbId(id) {
+	return document.getElementById(id);
+}
+
+const tHalf = gbId("top-half");
+const bHalf = gbId("bottom-half");
+
+const devBlot = gbId("dev-blot");
+const dsnBlot = gbId("dsn-blot");
+
+devBlot.addEventListener('mousemove', (event) => devHover(event));
+
+// decide how to render
+
+function render() {
+	// canvas sizes
+	const w = tHalf.getBoundingClientRect().width;
+	const h = tHalf.getBoundingClientRect().height;
+	// resize canvases to fit halves
+	devBlot.width = dsnBlot.width = w;
+	devBlot.height = dsnBlot.height = h;
+	let devCtx = devBlot.getContext("2d");
+	let dsnCtx = dsnBlot.getContext("2d");
+	
+	devCtx.font = gridSize + "px monospace";
+	for (let y = 0; y < nrows; y++) {
+		for (let x = 0; x < ncols; x++) {
+			const cell = devState[y][x];
+			devCtx.fillStyle = cell == 1 ? "#10a010" : "#444456";
+			devCtx.fillText(devState[y][x], x * gridSize, y * gridSize);
+		}
+	}
+}
+
+// create state grids for each visualization
+// grid can only be as big as the max possible canvas size (based on screen size)
+// divided by the size of each grid cell, to get number of rows and columns
+
+	// determine what grid size is appropriate?
+const gridSize = 12;
+const nrows = Math.ceil(window.screen.height / gridSize);
+const ncols = Math.ceil(window.screen.width / gridSize);
+
+const devState = Array(nrows).fill().map(() => Array(ncols).fill(0));
+const dsnState = devState.slice();
+
+function update() {
+	// states for use while updating the board
+	const stillDead = 0;
+	const stillAlive = 1;
+	const wasDead = 2;
+	const wasAlive = 3;
+	// helper to determine if this cell is/was alive
+	function alive(row, col) {
+		if (row < 0 || col < 0 || row >= nrows || col >= ncols)
+			return false;
+		else
+			return (devState[row][col] == stillAlive || devState[row][col] == wasAlive);
+	}
+	// helper to count live neighboring cells
+	function countLiveNeighbors(row, col) {
+		let count = 0;
+		for (let i = -1; i <= 1; i++)
+			for (let j = -1; j <= 1; j++)
+				if (i == 0 && j == 0)
+					continue;
+				else
+					count += alive(row + i, col + j) ? 1 : 0;
+		return count;
+	}
+	// conway's game of life logic
+	for (let y = 0; y < nrows; y++) {
+		for (let x = 0; x < ncols; x++) {
+			let buddies = countLiveNeighbors(y, x);
+			let living = alive(y, x);
+			/* Any live cell with fewer than two live neighbours dies, as if by underpopulation.
+			   Any live cell with two or three live neighbours lives on to the next generation.
+			   Any live cell with more than three live neighbours dies, as if by overpopulation.
+			   Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction. */
+			if (living && (buddies < 2 || buddies > 3))
+				devState[y][x] = wasAlive; // dies :(
+			else if (!living && buddies == 3)
+				devState[y][x] = wasDead; // new life! :)
+		}
+	}
+	// clean up wasDeads and wasAlives (convert to regular 0/1s)
+	for (let y = 0; y < nrows; y++) {
+		for (let x = 0; x < ncols; x++) {
+			if (devState[y][x] == wasAlive)
+				devState[y][x] = stillDead;
+			else if (devState[y][x] == wasDead)
+				devState[y][x] = stillAlive;
+		}
+	}
+}
+
+setInterval(() => {update(); render();}, 100);
+
+// when dev canvas is mouse moved
+function devHover(event) {
+	const x = event.offsetX;
+	const y = event.offsetY;
+	// get corresponding grid location
+	const gx = Math.floor(x / gridSize);
+	const gy = Math.floor(y / gridSize);
+	// flick to a 1
+	devState[gy][gx] = 1;
+}
+
+</script>
+
+</body>
+
+</html>
