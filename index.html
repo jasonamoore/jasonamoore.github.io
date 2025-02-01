@@ -16,7 +16,6 @@ body {
 #page-wrap {
 	width: 100%;
 	height: 100%;
-	background-color: #171619;
 }
 
 .half {
@@ -26,40 +25,54 @@ body {
 	box-sizing: border-box;
 }
 #top-half {
-	/*border-bottom: 1px solid #ccc;*/
+	background-color: #171619;
 }
 #top-half > span {
-	margin-left: 50px;
-	position: absolute;
-	bottom: 10px;
+	color: #f2f2ff;
+	bottom: 25px;
 }
 #bottom-half {
-	/*border-top: 1px solid #ccc;*/
+	background-color: #f2f2ff;
 }
 #bottom-half > span {
-	margin-left: 50px;
-	position: absolute;
-	top: 10px;
+	color: #171619;
+	top: 25px;
 }
+
 .half > span {
+	pointer-events: none;
+	user-select: none;
+	position: absolute;
 	z-index: 10;
+	margin-left: max(3%, 25px);
 	font-size: max(36px, 5vw);
 	font-weight: bold;
 }
 
-canvas {
+#top-half > canvas {
 	position: absolute;
+	bottom: 0px;
 }
 
 #right-bar {
 	position: absolute;
-	top: 20px;
-	bottom: 20px;
-	right: 10%;
+	top: 50px;
+	bottom: 50px;
+	right: 0;
 	width: 25%;
 	min-width: 200px;
-	padding: 25px;
-	background-color: rgba(255, 255, 255, 0.3);
+	padding: min(2.5%, 50px);
+	padding-right: max(25px, 7%);
+	/*background-color: rgba(255, 255, 255, 0.3);*/
+	background-color: #171619;
+	border-radius: 15px 0 0 15px;
+}
+
+#bar-content {
+	height: 100%;
+	box-sizing: border-box;
+	padding: 10px;
+	padding-right: 30px;
 	overflow: auto;
 }
 
@@ -86,88 +99,112 @@ canvas {
 	<div id="bottom-half" class="half"><span>Design</span><canvas id="dsn-blot"></canvas></div>
 	
 	<div id="right-bar">
-		<div class="thumb"><img src="placeholder.png" /><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></div>
-		<div class="thumb"><img src="placeholder.png" /><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></div>
-		<div class="thumb"><img src="placeholder.png" /><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></div>
+		<div id="bar-content">
+			<div class="thumb"><img src="placeholder.png" /><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></div>
+			<div class="thumb"><img src="placeholder.png" /><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></div>
+			<div class="thumb"><img src="placeholder.png" /><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></div>
+		</div>
 	</div>
 	
 </div>
 
 <script>
 
+// shorthand
 function gbId(id) {
 	return document.getElementById(id);
 }
 
+// useful objects to have
 const tHalf = gbId("top-half");
 const bHalf = gbId("bottom-half");
 
 const devBlot = gbId("dev-blot");
 const dsnBlot = gbId("dsn-blot");
 
-devBlot.addEventListener('mousemove', (event) => devHover(event));
+const viz = {cellSize: undefined, nrows: undefined, ncols: undefined,
+			 devGrid: undefined, dsnGrid: undefined};
+/* 
+  create state grids for each visualization (2d arrays)
+  grid can only be as big as the max possible canvas size (based on screen size)
+  divided by the size of a single grid cell, to get number of rows and columns
+*/
+function initVisuals() {
+	// TODO: determine what grid size is appropriate?
+	viz.cellSize = 12;
+	viz.nrows = Math.ceil(window.screen.height / 2 / viz.cellSize);
+	viz.ncols = Math.ceil(window.screen.width / viz.cellSize);
+	// initialize state grids
+	viz.devGrid = Array(viz.nrows).fill().map(() => Array(viz.ncols).fill(0));
+	viz.dsnGrid = Array(viz.ncols).fill(null); // this one is 2d, just need columns
+	// add listener for input interaction
+	devBlot.addEventListener('mousemove', (event) => devHover(event));
+	devBlot.addEventListener('mouseleave', () => {lastMouseX = undefined; lastMouseY = undefined;});
+	// start looping update and render calls
+	setInterval(() => update(), 100);
+	setInterval(() => render(), 1000/60);
+}
 
-// decide how to render
+function update() {
+	updateDevState();
+	updateDesignState();
+}
 
-function render() {
-	// canvas sizes
-	const w = tHalf.getBoundingClientRect().width;
-	const h = tHalf.getBoundingClientRect().height;
-	// resize canvases to fit halves
-	devBlot.width = dsnBlot.width = w;
-	devBlot.height = dsnBlot.height = h;
-	let devCtx = devBlot.getContext("2d");
-	let dsnCtx = dsnBlot.getContext("2d");
-	
-	devCtx.font = gridSize + "px monospace";
-	for (let y = 0; y < nrows; y++) {
-		for (let x = 0; x < ncols; x++) {
-			const cell = devState[y][x];
-			devCtx.fillStyle = cell == 1 ? "#10a010" : "#444456";
-			devCtx.fillText(devState[y][x], x * gridSize, y * gridSize);
+function updateDesignState() {
+	// look for 1s at the bottom of dev grid
+	for (let x = 0; x < viz.ncols; x++) {
+		if (viz.devGrid[viz.nrows-1][x] == 1) {
+			// make new paint drip here
+			let oldDrip = viz.dsnGrid[x];
+			// checking if we're ready to make a new drip here
+			if (oldDrip === null || Date.now() - oldDrip.start >= oldDrip.duration) {
+				viz.dsnGrid[x] = initNewDrip();
+				viz.dsnGrid[x].prev = oldDrip;
+			}
 		}
 	}
 }
 
-// create state grids for each visualization
-// grid can only be as big as the max possible canvas size (based on screen size)
-// divided by the size of each grid cell, to get number of rows and columns
+function initNewDrip(row) {
+	function randColors() {
+		let rgb = Array(3).fill(0).map(() => 190 + Math.random() * 35);
+		rgb[Math.floor(Math.random() * 3)] += 30;
+		let base = 1 << 24 | rgb[0] << 16 | rgb[1] << 8 | rgb[2];
+		let dark = Math.max(0, base - 0x222200);
+		return ["#" + base.toString(16).slice(1),"#" + dark.toString(16).slice(1)];
+	}
+	let [fcol, tcol] = randColors();
+	return {from: fcol, to: tcol, // random colors, random speed, no height
+			duration: 1000 * 4 * Math.random() + 2500, start: Date.now()};
+}
 
-	// determine what grid size is appropriate?
-const gridSize = 12;
-const nrows = Math.ceil(window.screen.height / gridSize);
-const ncols = Math.ceil(window.screen.width / gridSize);
-
-const devState = Array(nrows).fill().map(() => Array(ncols).fill(0));
-const dsnState = devState.slice();
-
-function update() {
+function updateDevState() {
 	// states for use while updating the board
 	const stillDead = 0;
 	const stillAlive = 1;
-	const wasDead = 2;
-	const wasAlive = 3;
+	const wasDead = 2; // used to denote a cell whose state will change
+	const wasAlive = 3; // .. at the completion of this tick
 	// helper to determine if this cell is/was alive
 	function alive(row, col) {
-		if (row < 0 || col < 0 || row >= nrows || col >= ncols)
+		if (row < 0 || col < 0 || row >= viz.nrows || col >= viz.ncols) // OOB
 			return false;
-		else
-			return (devState[row][col] == stillAlive || devState[row][col] == wasAlive);
+		else // is or was alive?
+			return (viz.devGrid[row][col] == stillAlive || viz.devGrid[row][col] == wasAlive);
 	}
 	// helper to count live neighboring cells
 	function countLiveNeighbors(row, col) {
 		let count = 0;
 		for (let i = -1; i <= 1; i++)
 			for (let j = -1; j <= 1; j++)
-				if (i == 0 && j == 0)
+				if (i == 0 && j == 0) // myself
 					continue;
 				else
 					count += alive(row + i, col + j) ? 1 : 0;
 		return count;
 	}
-	// conway's game of life logic
-	for (let y = 0; y < nrows; y++) {
-		for (let x = 0; x < ncols; x++) {
+	// Conway's Game of Life logic
+	for (let y = 0; y < viz.nrows; y++) {
+		for (let x = 0; x < viz.ncols; x++) {
 			let buddies = countLiveNeighbors(y, x);
 			let living = alive(y, x);
 			/* Any live cell with fewer than two live neighbours dies, as if by underpopulation.
@@ -175,34 +212,118 @@ function update() {
 			   Any live cell with more than three live neighbours dies, as if by overpopulation.
 			   Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction. */
 			if (living && (buddies < 2 || buddies > 3))
-				devState[y][x] = wasAlive; // dies :(
+				viz.devGrid[y][x] = wasAlive; // dies :(
 			else if (!living && buddies == 3)
-				devState[y][x] = wasDead; // new life! :)
+				viz.devGrid[y][x] = wasDead; // new life! :)
 		}
 	}
 	// clean up wasDeads and wasAlives (convert to regular 0/1s)
-	for (let y = 0; y < nrows; y++) {
-		for (let x = 0; x < ncols; x++) {
-			if (devState[y][x] == wasAlive)
-				devState[y][x] = stillDead;
-			else if (devState[y][x] == wasDead)
-				devState[y][x] = stillAlive;
+	for (let y = 0; y < viz.nrows; y++) {
+		for (let x = 0; x < viz.ncols; x++) {
+			if (viz.devGrid[y][x] == wasAlive)
+				viz.devGrid[y][x] = stillDead;
+			else if (viz.devGrid[y][x] == wasDead)
+				viz.devGrid[y][x] = stillAlive;
 		}
 	}
 }
 
-setInterval(() => {update(); render();}, 100);
+// trying mouse move ray tracing (point interpolation)
+var lastMouseX = undefined;
+var lastMouseY = undefined;
 
-// when dev canvas is mouse moved
+// called when cursor is moved over dev canvas
 function devHover(event) {
-	const x = event.offsetX;
-	const y = event.offsetY;
-	// get corresponding grid location
-	const gx = Math.floor(x / gridSize);
-	const gy = Math.floor(y / gridSize);
-	// flick to a 1
-	devState[gy][gx] = 1;
+	const mx = event.offsetX;
+	const my = event.offsetY;
+	const h = tHalf.getBoundingClientRect().height;
+	// do steps between two mouse points
+	if (lastMouseX !== undefined && lastMouseY !== undefined) {
+		// determine how many steps to take
+		let steps = Math.max(Math.abs(mx - lastMouseX) / viz.cellSize,
+							 Math.abs(my - lastMouseY) / viz.cellSize);
+		let curX = lastMouseX, curY = lastMouseY;
+		let xstepAm = (mx - lastMouseX) / steps; // x amount to move per step
+		let ystepAm = (my - lastMouseY) / steps; // y amount to move per step
+		for (let s = 0; s < steps; s++) {
+			// calculate interpol location in grid
+			const gx = Math.floor(curX / viz.cellSize);
+			const gy = Math.floor(viz.nrows - (h - curY) / viz.cellSize);
+			curX += xstepAm;
+			curY += ystepAm;
+			viz.devGrid[gy][gx] = 2; // set to "wasDead"
+		}
+	}
+	// no interpol; just get mouse's grid location
+	const gx = Math.floor(mx / viz.cellSize);
+	// (nrows - (h - my) / cellSize is to align at the half split)
+	const gy = Math.floor(viz.nrows - (h - my) / viz.cellSize);
+	// set to "wasDead" (to not interrupt any ongoing life-ing)
+	viz.devGrid[gy][gx] = 2;
+	// update last mouse position
+	lastMouseX = mx;
+	lastMouseY = my;
 }
+
+/*
+  draws on the canvases to make da magic happen
+*/
+function render() {
+	// determine canvas sizes, based on viewport size
+	const w = tHalf.getBoundingClientRect().width;
+	const h = tHalf.getBoundingClientRect().height;
+	// update each canvas element's size to fit half-screen
+	// this also clears the bitmap data before rendering
+	devBlot.width = dsnBlot.width = w;
+	devBlot.height = dsnBlot.height = h;
+	// get canvas drawing contexts
+	const devCtx = devBlot.getContext("2d");
+	const dsnCtx = dsnBlot.getContext("2d");
+	// set font for GOL display
+	devCtx.font = viz.cellSize + "px monospace";
+	devCtx.textBaseline = "top";
+	const txtMetrics = devCtx.measureText("0");
+	const txtOffW = (viz.cellSize - txtMetrics.width) / 2;
+	const txtOffH = (viz.cellSize - Math.abs(txtMetrics.alphabeticBaseline)) / 2;
+	// draw from bottom so grid aligns at half
+	for (let y = 0; y < viz.nrows; y++) {
+		for (let x = 0; x < viz.ncols; x++) {
+			// draw green 1 or grey 0 depending on cell state
+			const cell = viz.devGrid[viz.nrows - y - 1][x];
+			devCtx.fillStyle = cell == 1 ? "#056532" : "#383850";
+			devCtx.fillText(viz.devGrid[viz.nrows - y - 1][x], x * viz.cellSize + txtOffW,
+							h - (y + 1) * viz.cellSize + txtOffH);
+		}
+	}
+	// design canvas drawin'
+	const halfSize = viz.cellSize / 2;
+	for (let i = 0; i < viz.ncols; i++) {
+		let drip = viz.dsnGrid[i];
+		if (drip === null) // no drip here
+			continue;
+		// draw prev drip if exists
+		if (drip.prev !== null) {
+			const pgrad = dsnCtx.createLinearGradient(0, 0, 0, h);
+			pgrad.addColorStop(0, drip.prev.from);
+			pgrad.addColorStop(1, drip.prev.to);
+			dsnCtx.fillStyle = pgrad;
+			dsnCtx.fillRect(i * viz.cellSize, 0, viz.cellSize, h);
+		}
+		const height = Math.min(h, h * (Date.now() - drip.start) / drip.duration);
+		// draw circle at end of drip to make it round
+		dsnCtx.fillStyle = drip.to;
+		dsnCtx.beginPath();
+		dsnCtx.arc(i * viz.cellSize + halfSize, height, halfSize, 0, 2 * Math.PI);
+		dsnCtx.fill();
+		const grad = dsnCtx.createLinearGradient(0, 0, 0, height);
+		grad.addColorStop(0, drip.from);
+		grad.addColorStop(1, drip.to);
+		dsnCtx.fillStyle = grad;
+		dsnCtx.fillRect(i * viz.cellSize, 0, viz.cellSize, height);
+	}
+}
+
+initVisuals();
 
 </script>
 
