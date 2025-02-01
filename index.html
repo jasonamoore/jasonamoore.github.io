@@ -5,6 +5,8 @@
 <title>Portfolio - Jason Moore</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 
 html {
@@ -394,76 +396,65 @@ const devBlot = gbId("dev-blot");
 const dsnBlot = gbId("dsn-blot");
 
 const viz = {cellSize: undefined, nrows: undefined, ncols: undefined,
-			 devGrid: undefined, dsnGrid: undefined};
+			 lifeGrid: undefined, lastLifeGrid: undefined, dripColumns: undefined};
 /* 
   create state grids for each visualization (2d arrays)
   grid can only be as big as the max possible canvas size (based on screen size)
   divided by the size of a single grid cell, to get number of rows and columns
 */
 function initVisuals() {
-	// TODO: determine what grid size is appropriate?
-	viz.cellSize = 12;
+	viz.cellSize = Math.floor(window.screen.width / 125 *  window.devicePixelRatio);
+	devBlot.width = window.screen.width;//* dpr;
+	devBlot.height = window.screen.height / 2;// * dpr;
+	dsnBlot.width = window.screen.width;// * dpr;
+	dsnBlot.height = window.screen.height / 2;// * dpr;
 	viz.nrows = Math.ceil(window.screen.height / 2 / viz.cellSize);
 	viz.ncols = Math.ceil(window.screen.width / viz.cellSize);
 	// initialize state grids
-	viz.devGrid = Array(viz.nrows).fill().map(() => Array(viz.ncols).fill(0));
-	viz.dsnGrid = Array(viz.ncols).fill(null); // this one is 2d, just need columns
+	viz.lifeGrid = Array(viz.nrows).fill().map(() => Array(viz.ncols).fill(0));
+	viz.lastLifeGrid = Array(viz.nrows).fill().map(() => Array(viz.ncols).fill(-1));
+	// kick off dev render loop (this ensures we do an initial draw of 0s, since
+	// the 'lastLifeGrid' is filled with -1 and therefore interpreted as dirty
+	renderDev();
+	viz.dripColumns = Array(viz.ncols).fill(null); // this one is 2d, just need columns
 	// add listener for input interaction
 	devBlot.addEventListener('mousemove', (event) => devHover(event));
+	devBlot.addEventListener('mousedown', (event) => devHover(event));
 	devBlot.addEventListener('mouseleave', () => {lastMouseX = undefined; lastMouseY = undefined;});
-	// start looping update and render calls
-	setInterval(() => {update(); renderDev();}, 100);
-	setInterval(() => renderDesign(), 1000/60);
+	// start looping GOL updater and design renderer
+	setInterval(() => update(), 100);
+	renderDesign();
+}
+
+function tryInitNewDrip(col) {
+	// helper to make pretty colors
+	function randColors() {
+		let rgb = Array(3).fill(0).map(() => 210 + Math.random() * 45);
+		const boosti = Math.floor(Math.random() * 3);
+		rgb[boosti] = Math.min(255, rgb[boosti] + 30);
+		const base = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+		rgb = rgb.map((col, i) => col - (i == boosti ? 25 : 55));
+		const dark = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+		return [base, dark];
+	}
+	
+	// get existing paint drip here
+	const oldDrip = viz.dripColumns[col];
+	// checking if we're ready to make a new drip here
+	if (oldDrip === null || Date.now() - oldDrip.start >= oldDrip.duration) {
+		const [fcol, tcol] = randColors();
+		viz.dripColumns[col] = {from: fcol, to: tcol, col: col, // random colors, random speed, no height
+			duration: 1000 * 2.5 * Math.random() + 3500, start: Date.now()};
+		viz.dripColumns[col].prev = oldDrip;
+	}
+	// otherwise leave drip as is
 }
 
 function update() {
-	updateDevState();
-	updateDesignState();
-}
-
-function updateDesignState() {
-	// look for 1s at the bottom of dev grid
-	for (let x = 0; x < viz.ncols; x++) {
-		if (viz.devGrid[viz.nrows-1][x] == 1) {
-			// make new paint drip here
-			let oldDrip = viz.dsnGrid[x];
-			// checking if we're ready to make a new drip here
-			if (oldDrip === null || Date.now() - oldDrip.start >= oldDrip.duration) {
-				viz.dsnGrid[x] = initNewDrip(x);
-				viz.dsnGrid[x].prev = oldDrip;
-			}
-		}
-	}
-}
-
-function initNewDrip(col) {
-	function randColors() {
-		let rgb = Array(3).fill(0).map(() => 210 + Math.random() * 45);
-		let boosti = Math.floor(Math.random() * 3);
-		rgb[boosti] = Math.min(255, rgb[boosti] + 30);
-		let base = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-		rgb = rgb.map((col, i) => col - (i == boosti ? 25 : 55));
-		let dark = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-		return [base, dark];
-	}
-	let [fcol, tcol] = randColors();
-	return {from: fcol, to: tcol, col: col, // random colors, random speed, no height
-			duration: 1000 * 2.5 * Math.random() + 3500, start: Date.now()};
-}
-
-function updateDevState() {
-	// states for use while updating the board
-	const stillDead = 0;
-	const stillAlive = 1;
-	const wasDead = 2; // used to denote a cell whose state will change
-	const wasAlive = 3; // .. at the completion of this tick
-	// helper to determine if this cell is/was alive
-	function alive(row, col) {
-		if (row < 0 || col < 0 || row >= viz.nrows || col >= viz.ncols) // OOB
-			return false;
-		else // is or was alive?
-			return (viz.devGrid[row][col] == stillAlive || viz.devGrid[row][col] == wasAlive);
-	}
+	// copy current grid into last grid
+	for (let y = 0; y < viz.nrows; y++)
+		for (let x = 0; x < viz.ncols; x++)
+			viz.lastLifeGrid[y][x] = viz.lifeGrid[y][x];
 	// helper to count live neighboring cells
 	function countLiveNeighbors(row, col) {
 		let count = 0;
@@ -472,31 +463,27 @@ function updateDevState() {
 				if (i == 0 && j == 0) // myself
 					continue;
 				else
-					count += alive(row + i, col + j) ? 1 : 0;
+					count += row + i >= 0 && row + i < viz.nrows &&
+							 col + j >= 0 && col + j < viz.ncols ?
+							 viz.lastLifeGrid[row + i][col + j] : 0;
 		return count;
 	}
 	// Conway's Game of Life logic
 	for (let y = 0; y < viz.nrows; y++) {
 		for (let x = 0; x < viz.ncols; x++) {
-			let buddies = countLiveNeighbors(y, x);
-			let living = alive(y, x);
+			const living = viz.lastLifeGrid[y][x];
+			const buddies = countLiveNeighbors(y, x);
 			/* Any live cell with fewer than two live neighbours dies, as if by underpopulation.
 			   Any live cell with two or three live neighbours lives on to the next generation.
 			   Any live cell with more than three live neighbours dies, as if by overpopulation.
 			   Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction. */
 			if (living && (buddies < 2 || buddies > 3))
-				viz.devGrid[y][x] = wasAlive; // dies :(
-			else if (!living && buddies == 3)
-				viz.devGrid[y][x] = wasDead; // new life! :)
-		}
-	}
-	// clean up wasDeads and wasAlives (convert to regular 0/1s)
-	for (let y = 0; y < viz.nrows; y++) {
-		for (let x = 0; x < viz.ncols; x++) {
-			if (viz.devGrid[y][x] == wasAlive)
-				viz.devGrid[y][x] = stillDead;
-			else if (viz.devGrid[y][x] == wasDead)
-				viz.devGrid[y][x] = stillAlive;
+				viz.lifeGrid[y][x] = 0; // dies :(
+			else if (!living && buddies == 3) {
+				viz.lifeGrid[y][x] = 1; // new life! :)
+				if (y == viz.nrows - 1) // try new drip if at bottom
+					tryInitNewDrip(x);
+			}
 		}
 	}
 }
@@ -509,15 +496,15 @@ var lastMouseY = undefined;
 function devHover(event) {
 	const mx = event.offsetX;
 	const my = event.offsetY;
-	const h = tHalf.getBoundingClientRect().height;
+	const h = devBlot.height;
 	// do steps between two mouse points
 	if (lastMouseX !== undefined && lastMouseY !== undefined) {
 		// determine how many steps to take
-		let steps = Math.max(Math.abs(mx - lastMouseX) / viz.cellSize,
+		const steps = Math.max(Math.abs(mx - lastMouseX) / viz.cellSize,
 							 Math.abs(my - lastMouseY) / viz.cellSize);
+		const xstepAm = (mx - lastMouseX) / steps; // x amount to move per step
+		const ystepAm = (my - lastMouseY) / steps; // y amount to move per step
 		let curX = lastMouseX, curY = lastMouseY;
-		let xstepAm = (mx - lastMouseX) / steps; // x amount to move per step
-		let ystepAm = (my - lastMouseY) / steps; // y amount to move per step
 		for (let s = 0; s < steps; s++) {
 			// calculate interpol location in grid
 			const gx = Math.floor(curX / viz.cellSize);
@@ -525,16 +512,15 @@ function devHover(event) {
 			curX += xstepAm;
 			curY += ystepAm;
 			if (gy < viz.nrows - 5) // don't set bottom rows
-				viz.devGrid[gy][gx] = 2; // set to "wasDead"
+				viz.lifeGrid[gy][gx] = 1; // set alive
 		}
 	}
 	// no interpol; just get mouse's grid location
 	const gx = Math.floor(mx / viz.cellSize);
 	// (nrows - (h - my) / cellSize is to align at the half split)
 	const gy = Math.floor(viz.nrows - (h - my) / viz.cellSize);
-	// set to "wasDead" (to not interrupt any ongoing life-ing)
 	if (gy < viz.nrows - 5) // only if not bottom few rows
-		viz.devGrid[gy][gx] = 2;
+		viz.lifeGrid[gy][gx] = 1; // set alive
 	// update last mouse position
 	lastMouseX = mx;
 	lastMouseY = my;
@@ -544,13 +530,6 @@ function devHover(event) {
   draws on the canvases to make da magic happen
 */
 function renderDev() {
-	// determine canvas sizes, based on viewport size
-	const w = tHalf.getBoundingClientRect().width;
-	const h = tHalf.getBoundingClientRect().height;
-	// update canvas element size to fit half-screen
-	// this also clears the bitmap data before rendering
-	devBlot.width = w;
-	devBlot.height = h;
 	// get canvas drawing context
 	const devCtx = devBlot.getContext("2d");
 	// set font for GOL display
@@ -562,61 +541,63 @@ function renderDev() {
 	function colorGrade(amt) {
 		//	background-color: #171619;
 		//  deadColor = "#383850";
-		let newCol = 0x383850 - 0x07070A * (5 - amt)//Math.floor((0x383850 * amt + 0x171619 * (5 - amt)) / 5);
+		const newCol = 0x383850 - 0x07070A * (5 - amt);
 		return "#" + newCol.toString(16);
 	}
 	// draw from bottom so grid aligns at half
 	for (let y = 0; y < viz.nrows; y++) {
 		for (let x = 0; x < viz.ncols; x++) {
-			// draw green 1 or grey 0 depending on cell state
-			const cell = viz.devGrid[viz.nrows - y - 1][x];
+			const cell = viz.lifeGrid[viz.nrows - y - 1][x];
+			// note: text rendering is heavy, so do as little as possible
+			// ONLY RENDER IF CELL HAS CHANGED! OTHERWISE SKIP
+			if (cell === viz.lastLifeGrid[viz.nrows - y - 1][x])
+				continue;
+			// clear single cell
+			devCtx.clearRect(x * viz.cellSize, devBlot.height - (y + 1) * viz.cellSize,
+								viz.cellSize, viz.cellSize);
+			// draw green 1 or grey 0 depending on cell state 
 			const cChar = y == 0 && cell ? "!" : cell; // special ! for bottom row
 			const lifeColor = y == 0 ? "#A02C7A" : "#0E6C3A"; // special color for bottom row
 			const deadColor = y > 5 ? "#383850" : colorGrade(y); // bottom rows get lighter
 			devCtx.fillStyle = cell == 1 ? lifeColor : deadColor;
 			devCtx.fillText(cChar, x * viz.cellSize + txtOffW,
-							h - (y + 1) * viz.cellSize + txtOffH);
+							devBlot.height - (y + 1) * viz.cellSize + txtOffH);
 		}
 	}
+	requestAnimationFrame(renderDev);
 }
 
 function renderDesign() {
-	// determine canvas sizes, based on viewport size
-	const w = bHalf.getBoundingClientRect().width;
-	const h = bHalf.getBoundingClientRect().height;
-	// update canvas element size to fit half-screen
-	// this also clears the bitmap data before rendering
-	dsnBlot.width = w;
-	dsnBlot.height = h;
 	// get canvas drawing context
 	const dsnCtx = dsnBlot.getContext("2d");
+	dsnCtx.clearRect(0, 0, dsnBlot.width, dsnBlot.height);
 	// design canvas drawin'
 	// draw all prevs first (in background)
 	for (let i = 0; i < viz.ncols; i++) {
-		let drip = viz.dsnGrid[i];
+		const drip = viz.dripColumns[i];
 		if (drip === null) // no drip here
 			continue;
 		// draw prev drip if exists
 		if (drip.prev !== null) {
-			const pgrad = dsnCtx.createLinearGradient(0, 0, 0, h);
+			const pgrad = dsnCtx.createLinearGradient(0, 0, 0, dsnBlot.height);
 			pgrad.addColorStop(0, drip.prev.from);
 			pgrad.addColorStop(1, drip.prev.to);
 			dsnCtx.fillStyle = pgrad;
-			dsnCtx.fillRect(i * viz.cellSize, 0, viz.cellSize, h);
+			dsnCtx.fillRect(i * viz.cellSize, 0, viz.cellSize, dsnBlot.height);
 		}
 	}
 	// sort foreground drips on start time
-	realDrips = viz.dsnGrid.filter(drip => drip !== null);
+	realDrips = viz.dripColumns.filter(drip => drip !== null);
 	realDrips.sort((a, b) => a.start - b.start);
 	// for drawing drip circles
 	const halfSize = viz.cellSize / 2;
 	const pad = 10;
 	for (let i = 0; i < realDrips.length; i++) {
-		let drip = realDrips[i];
+		const drip = realDrips[i];
 		// how much of the animation duration has passed, as a fraction
 		const durfact = Math.min(1, (Date.now() - drip.start) / drip.duration);
 		const yOff = halfSize + pad; // start drawing here so it comes in smooth from the top
-		const height = (h + yOff) * durfact; // start before to fit bottom circle
+		const height = (dsnBlot.height + yOff) * durfact; // start before to fit bottom circle
 		const rpad = pad * (1 - durfact);
 		// draw circle at end of drip to make it round
 		dsnCtx.fillStyle = drip.to;
@@ -629,6 +610,7 @@ function renderDesign() {
 		dsnCtx.fillStyle = grad;
 		dsnCtx.fillRect(-rpad + drip.col * viz.cellSize, -yOff, viz.cellSize + rpad * 2, height);
 	}
+	requestAnimationFrame(renderDesign);
 }
 
 initVisuals();
