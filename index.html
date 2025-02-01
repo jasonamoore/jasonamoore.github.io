@@ -131,26 +131,27 @@ body {
 	border-radius: 12px;
 }
 
-.thumb-wrap {
-	position: relative;
-}
-
 .thumb {
-	border-radius: 12px;
-	width: 100%;
-}
-.thumb2 {
-	border-radius: 12px;
+	position: relative;
+	border-radius: 12px 12px 0 0;
 	width: 100%;
     padding-top: 56.25%; /* hack for aspect ratio*/
 	box-sizing: border-box;
-	background-image: url("turing/thumb.png");
-	background-size: 100%;
-	background-position: center;
+	background-color: 2f2e30;
 	transition: background-size 0.1s ease;
+	overflow: hidden;
 }
-.thumb-wrap:hover .thumb2 {
-	background-size: 101%;
+.thumb > img {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	color: #f2f2ff;
+	transition: transform 0.1s ease;
+}
+.thumb:hover > img {
+	transform: scale(1.01);
 }
 
 .proj-header {
@@ -167,7 +168,7 @@ body {
 	background-repeat: no-repeat;
 	transition: padding-bottom 0.1s ease;
 }
-.thumb-wrap:hover .proj-header {
+.thumb:hover .proj-header {
 	padding-bottom: 18px;
 }
 
@@ -240,68 +241,66 @@ body {
 	background-color: #5F5287;
 }
 .bb-haskell::before {
-	background-image: url('img/haskell-bubble.png');
+	background-image: url(img/haskell-bubble.png);
 }
 .bb-java {
 	background-color: #F88300;
 }
 .bb-java::before {
-	background-image: url('img/java-bubble.png');
+	background-image: url(img/java-bubble.png);
 }
 .bb-js {
 	background-color: #C17F03;
 }
 .bb-js::before {
-	background-image: url('img/js-bubble.png');
+	background-image: url(img/js-bubble.png);
 }
 .bb-json::before {
-	background-image: url('img/json-bubble.png');
+	background-image: url(img/json-bubble.png);
 }
 .bb-web {
 	background-color: #E75727;
 }
 .bb-web::before {
-	background-image: url('img/web-bubble.png');
+	background-image: url(img/web-bubble.png);
 }
 .bb-py {
 	background-color: #4280B2;
 }
 .bb-py::before {
-	background-image: url('img/py-bubble.png');
+	background-image: url(img/py-bubble.png);
 }
 .bb-php {
 	background-color: #3F4A89;
 }
 .bb-php::before {
-	background-image: url('img/php-bubble.png');
+	background-image: url(img/php-bubble.png);
 }
 .bb-db::before {
-	background-image: url('img/db-bubble.png');
+	background-image: url(img/db-bubble.png);
 }
 .bb-http {
 	background-color: #48B1EA;
 }
 .bb-http::before {
-	background-image: url('img/http-bubble.png');
+	background-image: url(img/http-bubble.png);
 }
 .bb-sys {
 	background-color: #007E1C;
 }
 .bb-sys::before {
-	background-image: url('img/sys-bubble.png');
+	background-image: url(img/sys-bubble.png);
 }
 
 .more::after {
 	content: '';
-	vertical-align: text-top;
 	display: inline-block;
-	width: 1.25em;
-	height: 1em;
-	background-image: url('img/ext-arrow.png');
+	margin-left: 0.25em;
+	width: 0.75em;
+	height: 0.75em;
+	background-image: url(img/ext-arrow.svg);
 	background-size: contain;
 	background-repeat: no-repeat;
-	background-position-x: center;
-	cursor: pointer;
 }
 
 .more:link {
@@ -337,40 +336,52 @@ body {
 	<div id="right-bar">
 		<div id="bar-content">
 			<div class="proj-view">
-				<div class="thumb-wrap">
-					<a href="/detail?p=turing"><div class="thumb2" ></div>
-					<div class="proj-header">Turing Machine Simulator</div></a>
-				</div>
+				<a href="/detail?p=turing"><div class="thumb">
+					<img srcset="turing/thumb-540w.jpg 540w, turing/thumb-920w.jpg 920w"
+						sizes="(max-width: 600px) 540px, 920px"
+						src="turing/thumb-920w.jpg"
+						alt="Command-line output displaying a simulated Turing machine tape">
+					<div class="proj-header">Turing Machine Simulator</div>
+				</div></a>
 				<div class="bubble-row">
 					<div class="tech-bubble bb-haskell">Haskell</div><div class="tech-bubble bb-json">JSON</div><div class="tech-bubble bb-none">Theory</div>
 				</div>
 				<div class="desc">A command-line Turing machine simulator and visualizer written in Haskell. Create Turing machines using a simple JSON definition, then import and run them in the simulator. The JSON is parsed with a custom parser also written in Haskell. <a href="detail/?p=turing" class="more">more</a></div>
 			</div>
 			<div class="proj-view">
-				<div class="thumb-wrap">
-					<img class="thumb" src="placeholder.png" />
+				<a href="/detail?p=turing"><div class="thumb">
+					<img srcset="turing/thumb-540w.jpg 540w, turing/thumb-920w.jpg 920w"
+						sizes="(max-width: 600px) 540px, 920px"
+						src="turing/thumb-920w.jpg"
+						alt="Command-line output displaying a simulated Turing machine tape">
 					<div class="proj-header">Picnix Game Engine</div>
-				</div>
+				</div></a>
 				<div class="bubble-row">
 					<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-sys">Multithreading</div><div class="tech-bubble bb-sys">Graphics</div>
 				</div>
 				<div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
 			</div>
 			<div class="proj-view">
-				<div class="thumb-wrap">
-					<img class="thumb" src="placeholder.png" />
-					<div class="proj-header">Spotify Playlist Iterator Demo</div>
-				</div>
+				<a href="/detail?p=turing"><div class="thumb">
+					<img srcset="turing/thumb-540w.jpg 540w, turing/thumb-920w.jpg 920w"
+						sizes="(max-width: 600px) 540px, 920px"
+						src="turing/thumb-920w.jpg"
+						alt="Command-line output displaying a simulated Turing machine tape">
+					<div class="proj-header">Spotify Playlist Iterator</div>
+				</div></a>
 				<div class="bubble-row">
 					<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-http">REST API</div><div class="tech-bubble bb-json">JSON</div>
 				</div>
 				<div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
 			</div>
 			<div class="proj-view">
-				<div class="thumb-wrap">
-					<img class="thumb" src="placeholder.png" />
+				<a href="/detail?p=turing"><div class="thumb">
+					<img srcset="turing/thumb-540w.jpg 540w, turing/thumb-920w.jpg 920w"
+						sizes="(max-width: 600px) 540px, 920px"
+						src="turing/thumb-920w.jpg"
+						alt="Command-line output displaying a simulated Turing machine tape">
 					<div class="proj-header">Miitomo Archive</div>
-				</div>
+				</div></a>
 				<div class="bubble-row">
 					<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-py">Python</div><div class="tech-bubble bb-js">JavaScript</div><div class="tech-bubble bb-web">HTML/CSS</div><div class="tech-bubble bb-php">PHP</div><div class="tech-bubble bb-db">Database</div><div class="tech-bubble bb-none">OCR</div>
 				</div>
@@ -396,7 +407,9 @@ const devBlot = gbId("dev-blot");
 const dsnBlot = gbId("dsn-blot");
 
 const viz = {cellSize: undefined, nrows: undefined, ncols: undefined,
-			 lifeGrid: undefined, lastLifeGrid: undefined, dripColumns: undefined};
+			 lifeGrid: undefined, lastLifeGrid: undefined, dripColumns: undefined,
+			 /*bottomTouchesLeft: 5*/};
+const faderRows = 0;
 /* 
   create state grids for each visualization (2d arrays)
   grid can only be as big as the max possible canvas size (based on screen size)
@@ -407,6 +420,7 @@ function initVisuals() {
 	devBlot.width = window.screen.width;//* dpr;
 	devBlot.height = window.screen.height / 2;// * dpr;
 	dsnBlot.width = window.screen.width;// * dpr;
+	dsnBlot.height = window.screen.height / 2;// * dpr;
 	dsnBlot.height = window.screen.height / 2;// * dpr;
 	viz.nrows = Math.ceil(window.screen.height / 2 / viz.cellSize);
 	viz.ncols = Math.ceil(window.screen.width / viz.cellSize);
@@ -497,11 +511,21 @@ function devHover(event) {
 	const mx = event.offsetX;
 	const my = event.offsetY;
 	const h = devBlot.height;
+	function tryAddLife(row, col) {
+		// don't set bottom rows, unless it's their first time(s)
+		if (row < viz.nrows - faderRows) {
+			viz.lifeGrid[row][col] = 1; // set alive
+			if (row == viz.nrows - 1)
+				tryInitNewDrip(col);
+		}
+	}
+	// determine how many steps to take
+	const hasLast = lastMouseX !== undefined && lastMouseY !== undefined;
+	const steps = hasLast ? Math.max(Math.abs(mx - lastMouseX) / viz.cellSize,
+							Math.abs(my - lastMouseY) / viz.cellSize) : 0;
 	// do steps between two mouse points
-	if (lastMouseX !== undefined && lastMouseY !== undefined) {
-		// determine how many steps to take
-		const steps = Math.max(Math.abs(mx - lastMouseX) / viz.cellSize,
-							 Math.abs(my - lastMouseY) / viz.cellSize);
+	if (steps > 1) {
+				console.log('stepping' + steps);
 		const xstepAm = (mx - lastMouseX) / steps; // x amount to move per step
 		const ystepAm = (my - lastMouseY) / steps; // y amount to move per step
 		let curX = lastMouseX, curY = lastMouseY;
@@ -511,16 +535,16 @@ function devHover(event) {
 			const gy = Math.floor(viz.nrows - (h - curY) / viz.cellSize);
 			curX += xstepAm;
 			curY += ystepAm;
-			if (gy < viz.nrows - 5) // don't set bottom rows
-				viz.lifeGrid[gy][gx] = 1; // set alive
+			tryAddLife(gy, gx);
 		}
 	}
 	// no interpol; just get mouse's grid location
-	const gx = Math.floor(mx / viz.cellSize);
-	// (nrows - (h - my) / cellSize is to align at the half split)
-	const gy = Math.floor(viz.nrows - (h - my) / viz.cellSize);
-	if (gy < viz.nrows - 5) // only if not bottom few rows
-		viz.lifeGrid[gy][gx] = 1; // set alive
+	else {
+		const gx = Math.floor(mx / viz.cellSize);
+		// (nrows - (h - my) / cellSize is to align at the half split)
+		const gy = Math.floor(viz.nrows - (h - my) / viz.cellSize);
+		tryAddLife(gy, gx);
+	}
 	// update last mouse position
 	lastMouseX = mx;
 	lastMouseY = my;
@@ -541,7 +565,7 @@ function renderDev() {
 	function colorGrade(amt) {
 		//	background-color: #171619;
 		//  deadColor = "#383850";
-		const newCol = 0x383850 - 0x07070A * (5 - amt);
+		const newCol = 0x383850 - 0x07070A * (faderRows - amt);
 		return "#" + newCol.toString(16);
 	}
 	// draw from bottom so grid aligns at half
@@ -556,9 +580,9 @@ function renderDev() {
 			devCtx.clearRect(x * viz.cellSize, devBlot.height - (y + 1) * viz.cellSize,
 								viz.cellSize, viz.cellSize);
 			// draw green 1 or grey 0 depending on cell state 
-			const cChar = y == 0 && cell ? "!" : cell; // special ! for bottom row
+			const cChar = y == 0 ? (cell ? '!' : '?') : cell; // special ! for bottom row
 			const lifeColor = y == 0 ? "#A02C7A" : "#0E6C3A"; // special color for bottom row
-			const deadColor = y > 5 ? "#383850" : colorGrade(y); // bottom rows get lighter
+			const deadColor = y > faderRows ? "#383850" : colorGrade(y); // bottom rows get lighter
 			devCtx.fillStyle = cell == 1 ? lifeColor : deadColor;
 			devCtx.fillText(cChar, x * viz.cellSize + txtOffW,
 							devBlot.height - (y + 1) * viz.cellSize + txtOffH);
