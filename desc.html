@@ -1,0 +1,197 @@
+<html>
+
+<head>
+
+<title>Portfolio - Jason Moore</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+
+<style>
+
+a:link {
+	color: #D6D6FF;
+}
+
+a:visited {
+	color: #9E9EFF;
+}
+
+a:focus {
+}
+
+a:hover {
+}
+
+a:active {
+	color: #7272FF;
+}
+
+html {
+	font-size: clamp(1rem, 2vw, 1.5rem);
+}
+
+body {
+	margin: 0;
+	font-family: Helvetica, sans-serif;
+	color: #f2f2ff;
+}
+
+#footer {
+	font-family: "Courier New", monospace;
+	position: absolute;
+	font-size: max(16px, 0.75rem);
+	bottom: 0;
+	background-color: #171619;
+	width: 100vw;
+	height: 1em;
+	padding: 1em 0;
+	text-align: center;
+	z-index: 1000;
+}
+
+.vbreak {
+	position: relative;
+	top: 0.25em;
+	margin: 0 1em;
+	display: inline-block;
+	height: 1em;
+	width: 1px;
+	background-color: #f2f2ff;
+}
+
+#parallax-wrap {
+	font-size: max(16px, 0.75rem);
+	width: 100vw;
+	height: calc(100vh - 3em);
+	overflow-x: hidden;
+	overflow-y: auto;
+	perspective: 50px;
+}
+
+.parallax {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+#video-wrap {
+	transform: translateZ(-25px) scale(1.6);
+	background-image: url(turing/thumb.png);
+	background-size: 100vw 50vh;
+}
+
+#content-wrap {
+	transform: translateZ(0px);
+	padding-top: 40vh;
+}
+
+#content {
+	background-color: #171619;
+	height: 100vh;
+	text-align: center;
+}
+
+#title {
+	text-align: center;
+	font-size: 3.5rem;
+	font-weight: bold;
+	padding: 0.1em 0 0.25em 0;
+	background-image: linear-gradient(to bottom, #171619d0 30%, #171619ff 95%);
+	background-repeat: no-repeat;
+	box-shadow: 0 17vh 12vh 16vh #000;
+}
+
+#external {
+	cursor: pointer;
+	font-family: Helvetica, sans-serif;
+	font-weight: bold;
+	color: #f2f2ff;
+	font-size: 1rem;
+	background-color: #168752;
+	border: 2px solid #00493C;
+	border-bottom-width: 5px;
+	border-radius: 4px;
+	padding: 0.5em;
+	margin-bottom: 1em;
+}
+#external:active {
+	background-color: #00493C;
+	border-bottom-width: 2px;
+	margin-top: 3px;
+}
+
+#external::after {
+	content: '';
+	vertical-align: text-top;
+	display: inline-block;
+	width: 1.25em;
+	margin-left: 0.25em;
+	height: 1em;
+	background-image: url('img/ext-arrow.png');
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position-x: center;
+}
+#external.git::before{
+	content: '';
+	vertical-align: text-top;
+	margin-top: 2px; /*bruh*/
+	display: inline-block;
+	width: 1.25em;
+	height: 1em;
+	background-image: url('img/ext-github.png');
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+#column-flex-wrap {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-around;
+	width: max(256px, 80%);
+	margin: auto;
+}
+
+.header {
+	font-size: 2rem;
+}
+.column {
+	font-size: 1rem;
+	padding: 1.25em;
+	background-color: #2f2e30;
+	border-radius: 12px;
+	margin-bottom: 2em;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="footer">by Jason Moore<div class="vbreak"></div><a href="index.html">portfolio main page</a></div>
+
+<div id="parallax-wrap">
+
+	<div id="video-wrap" class="parallax"><div class="media">Yooooo yo yo yo!</div></div>
+	
+	<div id="content-wrap" class="parallax">
+		<div id="title">Turing Simulator</div>
+		<div id="content">
+			<a href="https://github.com/jasonamoore/turingsim" target="_blank">
+				<button id="external" class="git">View on GitHub</button></a>
+			<div id="column-flex-wrap">
+				<div id="about" class="column"><div class="header">About</div>
+					the turing machine blah goober</div>
+				<div id="tech-stack" class="column"><div class="header">Technology</div>
+					here are the technologeez i used!1</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+</body>
+
+</html>

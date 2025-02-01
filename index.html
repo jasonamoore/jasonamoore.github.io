@@ -2,10 +2,14 @@
 
 <head>
 
-<title>Jason Moore</title>
+<title>Portfolio - Jason Moore</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 
 <style>
+
+html {
+	font-size: clamp(1rem, 2vw, 1.5rem);
+}
 
 body {
 	margin: 0;
@@ -24,28 +28,28 @@ body {
 	bottom: 15px;
 	left: 15px;
 	font-family: 'Courier New', monospace;
-	font-size: max(12px, 0.9vw);
+	font-size: max(16px, 0.8em);
+	/*font-weight: bold;*/
 }
 
 .half {
 	position: relative;
 	width: 100%;
 	height: 50%;
-	box-sizing: border-box;
 }
 #top-half {
 	background-color: #171619;
 }
 #top-half > span {
 	color: #f2f2ff;
-	bottom: 25px;
+	bottom: 1.15rem;
 }
 #bottom-half {
 	background-color: #f2f2ff;
 }
 #bottom-half > span {
 	color: #171619;
-	top: 25px;
+	top: 1.15rem;
 }
 
 .half > span {
@@ -69,8 +73,8 @@ body {
 	top: min(7%, 50px);
 	bottom: min(7%, 50px);
 	right: 0;
-	width: 35%;
-	min-width: 200px;
+	width: 38%;
+	min-width: 256px;
 	padding: min(2.5%, 50px);
 	padding-right: max(25px, 7%);
 	/*background-color: rgba(255, 255, 255, 0.3);*/
@@ -78,17 +82,16 @@ body {
 	background-color: #171619;
 	border-radius: 15px 0 0 15px;
 }
-/*
-#top-half:hover ~ #right-bar {
-	color: #f2f2ff;
-	background-color: #171619;
+
+@media screen and (max-width: 640px) {
+	#right-bar {
+		width: 100%;
+		padding-right: 0;
+		top: 0;
+		bottom: 0;
+	}
 }
 
-#bottom-half:hover ~ #right-bar {
-	color: #171619;
-	background-color: #f2f2ff;
-}
-*/
 #bar-content {
 	/*border-top: 1px solid #bbb;
 	border-bottom: 1px solid #bbb;*/
@@ -120,8 +123,8 @@ body {
 	margin-top: 0;
 }
 .proj-view {
-	margin-top: 50px;
-	padding: 25px;
+	margin-top: min(7vh, 50px);
+	padding: 1.25em;
 	background-color: #2f2e30;
 	border-radius: 12px;
 }
@@ -157,13 +160,18 @@ body {
 	left: 0;
 	bottom: 0;
 	padding: 8px 0 13px 0;
-	font-size: min(25px, 2vw);
+	font-size: 1.25rem;
 	background-image: linear-gradient(to bottom, #2f2e30d0 70%, #2f2e30ff 90%);
 	background-repeat: no-repeat;
 	transition: padding-bottom 0.1s ease;
 }
 .thumb-wrap:hover .proj-header {
 	padding-bottom: 18px;
+}
+
+.desc {
+	word-wrap: break-word;
+	font-size: 0.8rem;
 }
 
 .bubble-row {
@@ -176,7 +184,7 @@ body {
 	padding-left: min(10%, 50px);
 	padding-right: min(10%, 50px);*/
 	margin: auto;
-	margin-bottom: 10px;
+	margin-bottom: 0.25rem;
 }
 .bubble-row::-webkit-scrollbar {
     height: 5px;
@@ -197,26 +205,26 @@ body {
 
 .tech-bubble {
 	display: inline-block;
-	padding: 2px 8px;
-	padding-left: 25px;
+	padding: 4px 10px;
+	padding-left: calc(1.1em + 15px);
 	text-wrap: nowrap;
-	font-size: 14px;
-	height: 16px;
-	border-radius: 16px;
+	font-size: 0.75rem;
+	height: 1.1em;
+	border-radius: 1.1em;
 	background-color: #274C6B;
 	border: 1px solid rgba(255, 255, 255, 0.1);
-	margin: 0 5px 5px 5px;
+	margin: 0 0.25em 0.25em 0.25em;
 	position: relative;
 }
 .bb-none {
-	padding-left: 8px;
+	padding-left: 10px;
 }
 .tech-bubble:not(.bb-none)::before {
 	content: '';
 	display: inline-block;
 	position: absolute;
-	width: 20px;
-	height: 20px;
+	width: calc(1.1em + 8px);
+	height: calc(1.1em + 8px);
 	top: 0;
 	left: 0;
 	border-radius: 50%;
@@ -285,12 +293,12 @@ body {
 	content: '';
 	vertical-align: text-top;
 	display: inline-block;
-	width: 1.5em;
+	width: 1.25em;
 	height: 1em;
 	background-image: url('img/ext-arrow.png');
 	background-size: contain;
 	background-repeat: no-repeat;
-	background-position-x: 0.25em;
+	background-position-x: center;
 	cursor: pointer;
 }
 
@@ -322,7 +330,7 @@ body {
 	
 	<div id="top-half" class="half"><span>Development</span><canvas id="dev-blot"></canvas></div>
 	<div id="bottom-half" class="half"><span>Design</span><canvas id="dsn-blot"></canvas></div>
-	<a href="/about"><span id="byline">portfolio by Jason Moore</span></a>
+	<a href="https://www.linkedin.com/in/j4sonmoore/"><span id="byline">portfolio by Jason Moore</span></a>
 	
 	<div id="right-bar">
 		<div id="bar-content">
