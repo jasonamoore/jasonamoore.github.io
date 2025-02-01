@@ -59,14 +59,26 @@ body {
 	top: 50px;
 	bottom: 50px;
 	right: 0;
-	width: 25%;
+	width: 35%;
 	min-width: 200px;
 	padding: min(2.5%, 50px);
 	padding-right: max(25px, 7%);
 	/*background-color: rgba(255, 255, 255, 0.3);*/
+	color: #f2f2ff;
 	background-color: #171619;
 	border-radius: 15px 0 0 15px;
 }
+/*
+#top-half:hover ~ #right-bar {
+	color: #f2f2ff;
+	background-color: #171619;
+}
+
+#bottom-half:hover ~ #right-bar {
+	color: #171619;
+	background-color: #f2f2ff;
+}
+*/
 
 #bar-content {
 	height: 100%;
@@ -141,8 +153,8 @@ function initVisuals() {
 	devBlot.addEventListener('mousemove', (event) => devHover(event));
 	devBlot.addEventListener('mouseleave', () => {lastMouseX = undefined; lastMouseY = undefined;});
 	// start looping update and render calls
-	setInterval(() => update(), 100);
-	setInterval(() => render(), 1000/60);
+	setInterval(() => {update(); renderDev();}, 100);
+	setInterval(() => renderDesign(), 1000/60);
 }
 
 function update() {
@@ -158,24 +170,26 @@ function updateDesignState() {
 			let oldDrip = viz.dsnGrid[x];
 			// checking if we're ready to make a new drip here
 			if (oldDrip === null || Date.now() - oldDrip.start >= oldDrip.duration) {
-				viz.dsnGrid[x] = initNewDrip();
+				viz.dsnGrid[x] = initNewDrip(x);
 				viz.dsnGrid[x].prev = oldDrip;
 			}
 		}
 	}
 }
 
-function initNewDrip(row) {
+function initNewDrip(col) {
 	function randColors() {
-		let rgb = Array(3).fill(0).map(() => 190 + Math.random() * 35);
-		rgb[Math.floor(Math.random() * 3)] += 30;
-		let base = 1 << 24 | rgb[0] << 16 | rgb[1] << 8 | rgb[2];
-		let dark = Math.max(0, base - 0x222200);
-		return ["#" + base.toString(16).slice(1),"#" + dark.toString(16).slice(1)];
+		let rgb = Array(3).fill(0).map(() => 210 + Math.random() * 45);
+		let boosti = Math.floor(Math.random() * 3);
+		rgb[boosti] = Math.min(255, rgb[boosti] + 30);
+		let base = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+		rgb = rgb.map((col, i) => col - (i == boosti ? 25 : 55));
+		let dark = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+		return [base, dark];
 	}
 	let [fcol, tcol] = randColors();
-	return {from: fcol, to: tcol, // random colors, random speed, no height
-			duration: 1000 * 4 * Math.random() + 2500, start: Date.now()};
+	return {from: fcol, to: tcol, col: col, // random colors, random speed, no height
+			duration: 1000 * 2.5 * Math.random() + 3500, start: Date.now()};
 }
 
 function updateDevState() {
@@ -251,7 +265,8 @@ function devHover(event) {
 			const gy = Math.floor(viz.nrows - (h - curY) / viz.cellSize);
 			curX += xstepAm;
 			curY += ystepAm;
-			viz.devGrid[gy][gx] = 2; // set to "wasDead"
+			if (gy < viz.nrows - 5) // don't set bottom rows
+				viz.devGrid[gy][gx] = 2; // set to "wasDead"
 		}
 	}
 	// no interpol; just get mouse's grid location
@@ -259,7 +274,8 @@ function devHover(event) {
 	// (nrows - (h - my) / cellSize is to align at the half split)
 	const gy = Math.floor(viz.nrows - (h - my) / viz.cellSize);
 	// set to "wasDead" (to not interrupt any ongoing life-ing)
-	viz.devGrid[gy][gx] = 2;
+	if (gy < viz.nrows - 5) // only if not bottom few rows
+		viz.devGrid[gy][gx] = 2;
 	// update last mouse position
 	lastMouseX = mx;
 	lastMouseY = my;
@@ -268,35 +284,55 @@ function devHover(event) {
 /*
   draws on the canvases to make da magic happen
 */
-function render() {
+function renderDev() {
 	// determine canvas sizes, based on viewport size
 	const w = tHalf.getBoundingClientRect().width;
 	const h = tHalf.getBoundingClientRect().height;
-	// update each canvas element's size to fit half-screen
+	// update canvas element size to fit half-screen
 	// this also clears the bitmap data before rendering
-	devBlot.width = dsnBlot.width = w;
-	devBlot.height = dsnBlot.height = h;
-	// get canvas drawing contexts
+	devBlot.width = w;
+	devBlot.height = h;
+	// get canvas drawing context
 	const devCtx = devBlot.getContext("2d");
-	const dsnCtx = dsnBlot.getContext("2d");
 	// set font for GOL display
 	devCtx.font = viz.cellSize + "px monospace";
 	devCtx.textBaseline = "top";
 	const txtMetrics = devCtx.measureText("0");
 	const txtOffW = (viz.cellSize - txtMetrics.width) / 2;
 	const txtOffH = (viz.cellSize - Math.abs(txtMetrics.alphabeticBaseline)) / 2;
+	function colorGrade(amt) {
+		//	background-color: #171619;
+		//  deadColor = "#383850";
+		let newCol = 0x383850 - 0x07070A * (5 - amt)//Math.floor((0x383850 * amt + 0x171619 * (5 - amt)) / 5);
+		return "#" + newCol.toString(16);
+	}
 	// draw from bottom so grid aligns at half
 	for (let y = 0; y < viz.nrows; y++) {
 		for (let x = 0; x < viz.ncols; x++) {
 			// draw green 1 or grey 0 depending on cell state
 			const cell = viz.devGrid[viz.nrows - y - 1][x];
-			devCtx.fillStyle = cell == 1 ? "#056532" : "#383850";
-			devCtx.fillText(viz.devGrid[viz.nrows - y - 1][x], x * viz.cellSize + txtOffW,
+			const cChar = y == 0 && cell ? "!" : cell; // special ! for bottom row
+			const lifeColor = y == 0 ? "#952A75" : "#056532"; // special color for bottom row
+			const deadColor = y > 5 ? "#383850" : colorGrade(y); // bottom rows get lighter
+			devCtx.fillStyle = cell == 1 ? lifeColor : deadColor;
+			devCtx.fillText(cChar, x * viz.cellSize + txtOffW,
 							h - (y + 1) * viz.cellSize + txtOffH);
 		}
 	}
+}
+
+function renderDesign() {
+	// determine canvas sizes, based on viewport size
+	const w = bHalf.getBoundingClientRect().width;
+	const h = bHalf.getBoundingClientRect().height;
+	// update canvas element size to fit half-screen
+	// this also clears the bitmap data before rendering
+	dsnBlot.width = w;
+	dsnBlot.height = h;
+	// get canvas drawing context
+	const dsnCtx = dsnBlot.getContext("2d");
 	// design canvas drawin'
-	const halfSize = viz.cellSize / 2;
+	// draw all prevs first (in background)
 	for (let i = 0; i < viz.ncols; i++) {
 		let drip = viz.dsnGrid[i];
 		if (drip === null) // no drip here
@@ -309,17 +345,30 @@ function render() {
 			dsnCtx.fillStyle = pgrad;
 			dsnCtx.fillRect(i * viz.cellSize, 0, viz.cellSize, h);
 		}
-		const height = Math.min(h, h * (Date.now() - drip.start) / drip.duration);
+	}
+	// sort foreground drips on start time
+	realDrips = viz.dsnGrid.filter(drip => drip !== null);
+	realDrips.sort((a, b) => a.start - b.start);
+	// for drawing drip circles
+	const halfSize = viz.cellSize / 2;
+	const pad = 10;
+	for (let i = 0; i < realDrips.length; i++) {
+		let drip = realDrips[i];
+		// how much of the animation duration has passed, as a fraction
+		const durfact = Math.min(1, (Date.now() - drip.start) / drip.duration);
+		const yOff = halfSize + pad; // start drawing here so it comes in smooth from the top
+		const height = (h + yOff) * durfact; // start before to fit bottom circle
+		const rpad = pad * (1 - durfact);
 		// draw circle at end of drip to make it round
 		dsnCtx.fillStyle = drip.to;
 		dsnCtx.beginPath();
-		dsnCtx.arc(i * viz.cellSize + halfSize, height, halfSize, 0, 2 * Math.PI);
+		dsnCtx.arc(drip.col * viz.cellSize + halfSize, height - yOff, halfSize + rpad, 0, 2 * Math.PI);
 		dsnCtx.fill();
-		const grad = dsnCtx.createLinearGradient(0, 0, 0, height);
+		const grad = dsnCtx.createLinearGradient(0, 0, 0, height - yOff);
 		grad.addColorStop(0, drip.from);
 		grad.addColorStop(1, drip.to);
 		dsnCtx.fillStyle = grad;
-		dsnCtx.fillRect(i * viz.cellSize, 0, viz.cellSize, height);
+		dsnCtx.fillRect(-rpad + drip.col * viz.cellSize, -yOff, viz.cellSize + rpad * 2, height);
 	}
 }
 
