@@ -10,12 +10,21 @@
 body {
 	margin: 0;
 	font-family: Helvetica, sans-serif;
-	color: #fff;
 }
 
 #page-wrap {
 	width: 100%;
 	height: 100%;
+	overflow: hidden;
+}
+
+#byline {
+	color: #171619;
+	position: absolute;
+	bottom: 15px;
+	left: 15px;
+	font-family: 'Courier New', monospace;
+	font-size: max(12px, 0.9vw);
 }
 
 .half {
@@ -55,9 +64,10 @@ body {
 }
 
 #right-bar {
+	z-index: 15;
 	position: absolute;
-	top: 50px;
-	bottom: 50px;
+	top: min(7%, 50px);
+	bottom: min(7%, 50px);
 	right: 0;
 	width: 35%;
 	min-width: 200px;
@@ -84,7 +94,7 @@ body {
 	border-bottom: 1px solid #bbb;*/
 	height: 100%;
 	box-sizing: border-box;
-	padding: 0 50px;
+	padding: 0 min(7%, 50px);
 	overflow: auto;
 }
 #bar-content::-webkit-scrollbar {
@@ -129,7 +139,7 @@ body {
 	width: 100%;
     padding-top: 56.25%; /* hack for aspect ratio*/
 	box-sizing: border-box;
-	background-image: url("turingThumb.png");
+	background-image: url("turing/thumb.png");
 	background-size: 100%;
 	background-position: center;
 	transition: background-size 0.1s ease;
@@ -139,6 +149,7 @@ body {
 }
 
 .proj-header {
+	color: #f2f2ff;
 	font-weight: bold;
 	width: 100%;
 	text-align: center;
@@ -157,16 +168,16 @@ body {
 
 .bubble-row {
 	text-align: center;
-	width: 100%;
-	/*text-wrap: nowrap;
-	overflow-x: auto;*/
-	box-sizing: border-box;
-	padding-top: 10px;
+	width: 80%;
+	min-width: calc(100% - 100px);
+	/*text-wrap: nowrap;*/
+	overflow-x: auto;
+	/*box-sizing: border-box;
 	padding-left: min(10%, 50px);
-	padding-right: min(10%, 50px);
+	padding-right: min(10%, 50px);*/
+	margin: auto;
 	margin-bottom: 10px;
 }
-/*
 .bubble-row::-webkit-scrollbar {
     height: 5px;
 }
@@ -182,21 +193,25 @@ body {
 }
 .bubble-row::-webkit-scrollbar-button {
     display: none;
-}*/
+}
 
 .tech-bubble {
 	display: inline-block;
 	padding: 2px 8px;
 	padding-left: 25px;
+	text-wrap: nowrap;
 	font-size: 14px;
 	height: 16px;
 	border-radius: 16px;
-	border: 1px solid #bbb;
-	background-color: #80ccd0;
+	background-color: #274C6B;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	margin: 0 5px 5px 5px;
 	position: relative;
 }
-.tech-bubble::before {
+.bb-none {
+	padding-left: 8px;
+}
+.tech-bubble:not(.bb-none)::before {
 	content: '';
 	display: inline-block;
 	position: absolute;
@@ -206,7 +221,95 @@ body {
 	left: 0;
 	border-radius: 50%;
 	background-color: #ffeeff;
+	background-size: contain;
+	background-position: center;
 	vertical-align: middle;
+}
+
+.bb-haskell {
+	background-color: #5F5287;
+}
+.bb-haskell::before {
+	background-image: url('img/haskell-bubble.png');
+}
+.bb-java {
+	background-color: #F88300;
+}
+.bb-java::before {
+	background-image: url('img/java-bubble.png');
+}
+.bb-js {
+	background-color: #C17F03;
+}
+.bb-js::before {
+	background-image: url('img/js-bubble.png');
+}
+.bb-json::before {
+	background-image: url('img/json-bubble.png');
+}
+.bb-web {
+	background-color: #E75727;
+}
+.bb-web::before {
+	background-image: url('img/web-bubble.png');
+}
+.bb-py {
+	background-color: #4280B2;
+}
+.bb-py::before {
+	background-image: url('img/py-bubble.png');
+}
+.bb-php {
+	background-color: #3F4A89;
+}
+.bb-php::before {
+	background-image: url('img/php-bubble.png');
+}
+.bb-db::before {
+	background-image: url('img/db-bubble.png');
+}
+.bb-http {
+	background-color: #48B1EA;
+}
+.bb-http::before {
+	background-image: url('img/http-bubble.png');
+}
+.bb-sys {
+	background-color: #007E1C;
+}
+.bb-sys::before {
+	background-image: url('img/sys-bubble.png');
+}
+
+.more::after {
+	content: '';
+	vertical-align: text-top;
+	display: inline-block;
+	width: 1.5em;
+	height: 1em;
+	background-image: url('img/ext-arrow.png');
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position-x: 0.25em;
+	cursor: pointer;
+}
+
+.more:link {
+	color: #D6D6FF;
+}
+
+.more:visited {
+	color: #9E9EFF;
+}
+
+.more:focus {
+}
+
+.more:hover {
+}
+
+.more:active {
+	color: #7272FF;
 }
 
 </style>
@@ -219,26 +322,37 @@ body {
 	
 	<div id="top-half" class="half"><span>Development</span><canvas id="dev-blot"></canvas></div>
 	<div id="bottom-half" class="half"><span>Design</span><canvas id="dsn-blot"></canvas></div>
+	<a href="/about"><span id="byline">portfolio by Jason Moore</span></a>
 	
 	<div id="right-bar">
 		<div id="bar-content">
 			<div class="proj-view">
 				<div class="thumb-wrap">
-					<div class="thumb2" ></div>
-					<div class="proj-header">Turing Machine Simulator</div>
+					<a href="/detail?p=turing"><div class="thumb2" ></div>
+					<div class="proj-header">Turing Machine Simulator</div></a>
 				</div>
 				<div class="bubble-row">
-					<div class="tech-bubble bb-haskell">Haskell</div><div class="tech-bubble bb-json">JSON</div><div class="tech-bubble bb-theory">Theory</div>
+					<div class="tech-bubble bb-haskell">Haskell</div><div class="tech-bubble bb-json">JSON</div><div class="tech-bubble bb-none">Theory</div>
+				</div>
+				<div class="desc">A command-line Turing machine simulator and visualizer written in Haskell. Create Turing machines using a simple JSON definition, then import and run them in the simulator. The JSON is parsed with a custom parser also written in Haskell. <a href="detail/?p=turing" class="more">more</a></div>
+			</div>
+			<div class="proj-view">
+				<div class="thumb-wrap">
+					<img class="thumb" src="placeholder.png" />
+					<div class="proj-header">Picnix Game Engine</div>
+				</div>
+				<div class="bubble-row">
+					<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-sys">Multithreading</div><div class="tech-bubble bb-sys">Graphics</div>
 				</div>
 				<div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
 			</div>
 			<div class="proj-view">
 				<div class="thumb-wrap">
 					<img class="thumb" src="placeholder.png" />
-					<div class="proj-header">Spotify API Iterator Demo</div>
+					<div class="proj-header">Spotify Playlist Iterator Demo</div>
 				</div>
 				<div class="bubble-row">
-					<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-json">JSON</div><div class="tech-bubble bb-http">HttpClient</div>
+					<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-http">REST API</div><div class="tech-bubble bb-json">JSON</div>
 				</div>
 				<div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
 			</div>
@@ -248,7 +362,7 @@ body {
 					<div class="proj-header">Miitomo Archive</div>
 				</div>
 				<div class="bubble-row">
-					<div class="tech-bubble bb-ocr">Java</div><div class="tech-bubble bb-ocr">Python</div><div class="tech-bubble bb-js">JavaScript</div><div class="tech-bubble bb-web">HTML/CSS</div><div class="tech-bubble bb-php">PHP</div><div class="tech-bubble bb-sql">SQL</div><div class="tech-bubble bb-ocr">OCR</div>
+					<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-py">Python</div><div class="tech-bubble bb-js">JavaScript</div><div class="tech-bubble bb-web">HTML/CSS</div><div class="tech-bubble bb-php">PHP</div><div class="tech-bubble bb-db">Database</div><div class="tech-bubble bb-none">OCR</div>
 				</div>
 				<div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
 			</div>
@@ -449,7 +563,7 @@ function renderDev() {
 			// draw green 1 or grey 0 depending on cell state
 			const cell = viz.devGrid[viz.nrows - y - 1][x];
 			const cChar = y == 0 && cell ? "!" : cell; // special ! for bottom row
-			const lifeColor = y == 0 ? "#952A75" : "#056532"; // special color for bottom row
+			const lifeColor = y == 0 ? "#A02C7A" : "#0E6C3A"; // special color for bottom row
 			const deadColor = y > 5 ? "#383850" : colorGrade(y); // bottom rows get lighter
 			devCtx.fillStyle = cell == 1 ? lifeColor : deadColor;
 			devCtx.fillText(cChar, x * viz.cellSize + txtOffW,
