@@ -3,322 +3,12 @@
 <head>
 
 <title>Portfolio - Jason Moore</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+<link href="global.css" rel="stylesheet" />
+<link href="mainsheet.css" rel="stylesheet" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-
-html {
-	font-size: clamp(1rem, 2vw, 1.5rem);
-}
-
-body {
-	margin: 0;
-	font-family: Helvetica, sans-serif;
-}
-
-#page-wrap {
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-}
-
-#byline {
-	color: #171619;
-	position: absolute;
-	bottom: 15px;
-	left: 15px;
-	font-family: 'Courier New', monospace;
-	font-size: max(16px, 0.8em);
-	/*font-weight: bold;*/
-}
-
-.half {
-	position: relative;
-	width: 100%;
-	height: 50%;
-}
-#top-half {
-	background-color: #171619;
-}
-#top-half > span {
-	color: #f2f2ff;
-	bottom: 1.15rem;
-}
-#bottom-half {
-	background-color: #f2f2ff;
-}
-#bottom-half > span {
-	color: #171619;
-	top: 1.15rem;
-}
-
-.half > span {
-	pointer-events: none;
-	user-select: none;
-	position: absolute;
-	z-index: 10;
-	margin-left: max(3%, 25px);
-	font-size: max(36px, 5vw);
-	font-weight: bold;
-}
-
-#top-half > canvas {
-	position: absolute;
-	bottom: 0px;
-}
-
-#right-bar {
-	z-index: 15;
-	position: absolute;
-	top: min(7%, 50px);
-	bottom: min(7%, 50px);
-	right: 0;
-	width: 38%;
-	min-width: 256px;
-	padding: min(2.5%, 50px);
-	padding-right: max(25px, 7%);
-	/*background-color: rgba(255, 255, 255, 0.3);*/
-	color: #f2f2ff;
-	background-color: #171619;
-	border-radius: 15px 0 0 15px;
-}
-
-@media screen and (max-width: 640px) {
-	#right-bar {
-		width: 100%;
-		padding-right: 0;
-		top: 0;
-		bottom: 0;
-	}
-}
-
-#bar-content {
-	/*border-top: 1px solid #bbb;
-	border-bottom: 1px solid #bbb;*/
-	height: 100%;
-	box-sizing: border-box;
-	padding: 0 min(7%, 50px);
-	overflow: auto;
-}
-#bar-content::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-#bar-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-#bar-content::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
-}
-#bar-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.25);
-}
-#bar-content::-webkit-scrollbar-button,
-#bar-content::-webkit-scrollbar-corner {
-    display: none;
-}
-
-.proj-view:nth-of-type(1) {
-	margin-top: 0;
-}
-.proj-view {
-	margin-top: min(7vh, 50px);
-	padding: 1.25em;
-	background-color: #2f2e30;
-	border-radius: 12px;
-}
-
-.thumb {
-	position: relative;
-	border-radius: 12px 12px 0 0;
-	width: 100%;
-    aspect-ratio: 16 / 9;
-	box-sizing: border-box;
-	background-color: 2f2e30;
-	transition: background-size 0.1s ease;
-	overflow: hidden;
-}
-.thumb > img {
-	display: block;
-	width: 100%;
-	color: #f2f2ff;
-	transition: transform 0.1s ease;
-}
-.thumb:hover > img {
-	transform: scale(1.01);
-}
-
-.proj-header {
-	color: #f2f2ff;
-	font-weight: bold;
-	width: 100%;
-	text-align: center;
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	padding: 8px 0 13px 0;
-	font-size: 1.25rem;
-	background-image: linear-gradient(to bottom, #2f2e30d0 70%, #2f2e30ff 90%);
-	background-repeat: no-repeat;
-	transition: padding-bottom 0.1s ease;
-}
-.thumb:hover .proj-header {
-	padding-bottom: 18px;
-}
-
-.desc {
-	word-wrap: break-word;
-	font-size: 0.8rem;
-}
-
-.bubble-row {
-	text-align: center;
-	width: 80%;
-	min-width: calc(100% - 100px);
-	/*text-wrap: nowrap;*/
-	overflow-x: auto;
-	/*box-sizing: border-box;
-	padding-left: min(10%, 50px);
-	padding-right: min(10%, 50px);*/
-	margin: auto;
-	margin-bottom: 0.25rem;
-}
-.bubble-row::-webkit-scrollbar {
-    height: 5px;
-}
-.bubble-row::-webkit-scrollbar-track {
-    background: transparent;
-}
-.bubble-row::-webkit-scrollbar-thumb {
-    background: rgba(100, 100, 100, 0.5);
-    border-radius: 5px;
-}
-.bubble-row:hover::-webkit-scrollbar-thumb {
-    background: rgba(100, 100, 100, 0.8);
-}
-.bubble-row::-webkit-scrollbar-button {
-    display: none;
-}
-
-.tech-bubble {
-	display: inline-block;
-	padding: 4px 10px;
-	padding-left: calc(1.1em + 15px);
-	text-wrap: nowrap;
-	font-size: 0.75rem;
-	height: 1.1em;
-	border-radius: 1.1em;
-	background-color: #274C6B;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	margin: 0 0.25em 0.25em 0.25em;
-	position: relative;
-}
-.bb-none {
-	padding-left: 10px;
-}
-.tech-bubble:not(.bb-none)::before {
-	content: '';
-	display: inline-block;
-	position: absolute;
-	width: calc(1.1em + 8px);
-	height: calc(1.1em + 8px);
-	top: 0;
-	left: 0;
-	border-radius: 50%;
-	background-color: #ffeeff;
-	background-size: contain;
-	background-position: center;
-	vertical-align: middle;
-}
-
-.bb-haskell {
-	background-color: #5F5287;
-}
-.bb-haskell::before {
-	background-image: url(img/haskell-bubble.png);
-}
-.bb-java {
-	background-color: #F88300;
-}
-.bb-java::before {
-	background-image: url(img/java-bubble.png);
-}
-.bb-js {
-	background-color: #C17F03;
-}
-.bb-js::before {
-	background-image: url(img/js-bubble.png);
-}
-.bb-json::before {
-	background-image: url(img/json-bubble.png);
-}
-.bb-web {
-	background-color: #E75727;
-}
-.bb-web::before {
-	background-image: url(img/web-bubble.png);
-}
-.bb-py {
-	background-color: #4280B2;
-}
-.bb-py::before {
-	background-image: url(img/py-bubble.png);
-}
-.bb-php {
-	background-color: #3F4A89;
-}
-.bb-php::before {
-	background-image: url(img/php-bubble.png);
-}
-.bb-db::before {
-	background-image: url(img/db-bubble.png);
-}
-.bb-http {
-	background-color: #48B1EA;
-}
-.bb-http::before {
-	background-image: url(img/http-bubble.png);
-}
-.bb-sys {
-	background-color: #007E1C;
-}
-.bb-sys::before {
-	background-image: url(img/sys-bubble.png);
-}
-
-.more::after {
-	content: '';
-	display: inline-block;
-	margin-left: 0.25em;
-	width: 0.75em;
-	height: 0.75em;
-	background-image: url(img/ext-arrow.svg);
-	background-size: contain;
-	background-repeat: no-repeat;
-}
-
-.more:link {
-	color: #D6D6FF;
-}
-
-.more:visited {
-	color: #9E9EFF;
-}
-
-.more:focus {
-}
-
-.more:hover {
-}
-
-.more:active {
-	color: #7272FF;
-}
-
-</style>
 
 </head>
 
@@ -333,7 +23,33 @@ body {
 	<div id="right-bar">
 		<div id="bar-content">
 			<div class="proj-view">
-				<a href="/detail?p=turing"><div class="thumb">
+				<a href="miitomo/index.html"><div class="thumb">
+					<img srcset="miitomo/thumb-540w.jpg 540w, miitomo/thumb-920w.jpg 920w"
+						sizes="(max-width: 600px) 540px, 920px"
+						src="miitomo/thumb-920w.jpg"
+						alt="A sidebar showing various filters and a result feed displaying a post from the archive">
+					<div class="proj-header">Miitomo Archive</div>
+				</div></a>
+				<div class="bubble-row">
+					<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-py">Python</div><div class="tech-bubble bb-js">JavaScript</div><div class="tech-bubble bb-web">HTML/CSS</div><div class="tech-bubble bb-php">PHP</div><div class="tech-bubble bb-db">Database</div><div class="tech-bubble bb-none">OCR</div>
+				</div>
+				<div class="desc">An archive of posts, replies, and images extracted from screen captures of a now-defunct social app game. The posts were restored using custom image processing algorithms and OCR to detect, extract, sanitize, and merge data from tens of thousands of video frames. <a href="turing/index.html" class="more">more</a></div>
+			</div>
+			<div class="proj-view">
+				<a href="picnix/index.html"><div class="thumb">
+					<img srcset="picnix/thumb-540w.jpg 540w, picnix/thumb-920w.jpg 920w"
+						sizes="(max-width: 600px) 540px, 920px"
+						src="picnix/thumb-920w.jpg"
+						alt="A screenshot of the Picnix game interface, with the user solving a Nonogram grid puzzle on a picnic blanket">
+					<div class="proj-header">Picnix</div>
+				</div></a>
+				<div class="bubble-row">
+					<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-sys">Multithreading</div><div class="tech-bubble bb-sys">Graphics</div>
+				</div>
+				<div class="desc">A picnic-themed Nonogram/Picross puzzle game developed from scratch in Java. Picnix is built from a robust and extensible custom game engine that handles user input, game threads, and graphics rendering all with built-in Java libraries. <a href="turing/index.html" class="more">more</a></div>
+			</div>
+			<div class="proj-view">
+				<a href="turing/index.html"><div class="thumb">
 					<img srcset="turing/thumb-540w.jpg 540w, turing/thumb-920w.jpg 920w"
 						sizes="(max-width: 600px) 540px, 920px"
 						src="turing/thumb-920w.jpg"
@@ -343,46 +59,33 @@ body {
 				<div class="bubble-row">
 					<div class="tech-bubble bb-haskell">Haskell</div><div class="tech-bubble bb-json">JSON</div><div class="tech-bubble bb-none">Theory</div>
 				</div>
-				<div class="desc">A command-line Turing machine simulator and visualizer written in Haskell. Create Turing machines using a simple JSON definition, then import and run them in the simulator. The JSON is parsed with a custom parser also written in Haskell. <a href="detail/?p=turing" class="more">more</a></div>
+				<div class="desc">A command-line Turing machine simulator and visualizer written in Haskell. Create and load a machine from JSON, then run step-by-step to examine its operation or run continously see the resulting tape. <a href="turing/index.html" class="more">more</a></div>
 			</div>
 			<div class="proj-view">
-				<a href="/detail?p=turing"><div class="thumb">
-					<img srcset="turing/thumb-540w.jpg 540w, turing/thumb-920w.jpg 920w"
+				<a href="wordladder/index.html"><div class="thumb">
+					<img srcset="wordladder/thumb-540w.jpg 540w, wordladder/thumb-920w.jpg 920w"
 						sizes="(max-width: 600px) 540px, 920px"
-						src="turing/thumb-920w.jpg"
-						alt="Command-line output displaying a simulated Turing machine tape">
-					<div class="proj-header">Picnix Game Engine</div>
+						src="wordladder/thumb-920w.jpg"
+						alt="Screenshot of the Word Ladder app, showing the player at BARD trying to reach the target word TART">
+					<div class="proj-header">Word Ladder</div>
+				</div></a>
+				<div class="bubble-row">
+					<div class="tech-bubble bb-kotlin">Kotlin</div><div class="tech-bubble bb-android">Android</div><div class="tech-bubble bb-http">Retrofit</div><div class="tech-bubble bb-aws">AWS</div><div class="tech-bubble bb-php">PHP</div>
+				</div>
+				<div class="desc">A daily challenge word game written in Kotlin for Android. Complete the word ladder in as few steps as possible and submit your score to the leaderboard to see how you did. <a href="turing/index.html" class="more">more</a></div>
+			</div>
+			<div class="proj-view">
+				<a href="minesweeper/index.html"><div class="thumb">
+					<img srcset="minesweeper/thumb-540w.jpg 540w, minesweeper/thumb-920w.jpg 920w"
+						sizes="(max-width: 600px) 540px, 920px"
+						src="minesweeper/thumb-920w.jpg"
+						alt="A screenshot of a Minesweeper board, with grids showing numbers and flags">
+					<div class="proj-header">Minesweeper Rewritten</div>
 				</div></a>
 				<div class="bubble-row">
 					<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-sys">Multithreading</div><div class="tech-bubble bb-sys">Graphics</div>
 				</div>
-				<div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-			</div>
-			<div class="proj-view">
-				<a href="/detail?p=turing"><div class="thumb">
-					<img srcset="turing/thumb-540w.jpg 540w, turing/thumb-920w.jpg 920w"
-						sizes="(max-width: 600px) 540px, 920px"
-						src="turing/thumb-920w.jpg"
-						alt="Command-line output displaying a simulated Turing machine tape">
-					<div class="proj-header">Spotify Playlist Iterator</div>
-				</div></a>
-				<div class="bubble-row">
-					<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-http">REST API</div><div class="tech-bubble bb-json">JSON</div>
-				</div>
-				<div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-			</div>
-			<div class="proj-view">
-				<a href="/detail?p=turing"><div class="thumb">
-					<img srcset="turing/thumb-540w.jpg 540w, turing/thumb-920w.jpg 920w"
-						sizes="(max-width: 600px) 540px, 920px"
-						src="turing/thumb-920w.jpg"
-						alt="Command-line output displaying a simulated Turing machine tape">
-					<div class="proj-header">Miitomo Archive</div>
-				</div></a>
-				<div class="bubble-row">
-					<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-py">Python</div><div class="tech-bubble bb-js">JavaScript</div><div class="tech-bubble bb-web">HTML/CSS</div><div class="tech-bubble bb-php">PHP</div><div class="tech-bubble bb-db">Database</div><div class="tech-bubble bb-none">OCR</div>
-				</div>
-				<div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+				<div class="desc">A recreation of classic Minesweeper written in Java in a day. It plays just like the original game, but with fresh animations and sound effects to add some unique flair. <a href="turing/index.html" class="more">more</a></div>
 			</div>
 		</div>
 	</div>
@@ -563,8 +266,8 @@ function renderDev() {
 	function colorGrade(y) {
 		if (y > fadedRows)
 			return '#383850';
-		else if (y == 0)
-			return '#A2A2AA';
+		//else if (y == 0)
+		//	return '#A2A2AA';
 		else {
 			const newCol = 0x383850 - 0x07070A * (fadedRows - y);
 			return '#' + newCol.toString(16);

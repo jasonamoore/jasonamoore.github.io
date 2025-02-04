@@ -1,0 +1,82 @@
+<html>
+
+<head>
+
+<title>Turing Machine Simulator - Portfolio</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+
+<link href="../global.css" rel="stylesheet" />
+<link href="../detailsheet.css" rel="stylesheet" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+<body>
+
+<a href="../index.html"><div id="nav-back">
+	<div id="back-button"></div><div id="back-label"><span>back to home</span></div>
+</div></a>
+
+<div id="footer">by Jason Moore<div class="vbreak"></div><a href="../index.html">home page</a></div>
+
+<div id="parallax-wrap">
+
+	<div id="video-wrap" class="parallax">
+		<video autoplay loop muted id="back-video"></video>
+		<script>
+			const vid = document.getElementById('back-video');
+			vid.src = 'backvid-' + (matchMedia( '(min-width: 900px)' ).matches ? '1920' : '854') + 'w.mp4';
+			vid.addEventListener('loadeddata', () => vid.play()); // start on load
+		</script>
+	</div>
+	
+	<div id="content-wrap" class="parallax">
+		<div id="title">Turing Machine Simulator</div>
+		<div id="content">
+			<a href="https://github.com/jasonamoore/turingsim" target="_blank">
+				<button id="external" class="git">View on GitHub</button></a>
+			<div id="column-flex-wrap">
+				<div id="about" class="column"><div class="header">Description</div>
+					<p>A fun programming toy and educational tool, this Haskell program simulates the operation of a Turing machine.</p>
+					<p>Simply load a JSON file containing a machine definition, provide an input tape, and then start running!</p>
+					<p>While running, the program will provide a visual of the tape contents, the position of the read/write head, and the machine's state.</p>
+					<p>Step individually to examine each transition the machine makes, or run continuously to see whether the machine terminates and the input was accepted.</p>
+					</div>
+				<div id="tech-stack" class="column"><div class="header">Technology</div>
+					<div id="inline-bubble-row">
+						<div class="tech-bubble bb-haskell">Haskell</div><div class="tech-bubble bb-json">JSON</div>
+					</div>
+					<ul id="tech-list">
+						<li>The simulator is built in Haskell, utilizing its functional language features to make the Turing machine both efficient and accurate. Haskell's list comprehension and lazy evaluation features are perfect for implementing an infinite tape.</li>
+						<li>The simulator builds machines from a JSON object with keys defining its states, alphabets, and transitions. Input JSON files are interpreted using the shift-reduce parser, which was written from scratch for the project.</li>
+					</ul>
+					</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+<script>
+
+document.getElementById('inline-bubble-row').childNodes.forEach((child, index) => {
+												const f = () => toggleHighlight(index);
+												child.addEventListener('mouseenter', f);
+												child.addEventListener('mouseleave', f);
+											});
+
+// 1-indexed
+function toggleHighlight(num) {
+	const li = document.getElementById('tech-list').querySelector(`li:nth-child(${num})`);
+	if (li.classList.contains('highlight'))
+		li.classList.remove('highlight');
+	else
+		li.classList.add('highlight');
+}
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,131 @@
+:root {
+	color-scheme: dark;
+}
+
+a:link {
+	color: #D6D6FF;
+}
+
+a:visited {
+	color: #9E9EFF;
+}
+
+a:focus {
+}
+
+a:hover {
+}
+
+a:active {
+	color: #7272FF;
+}
+
+html {
+	font-size: clamp(1rem, 1.5vw, 1.5rem);
+}
+
+body {
+	margin: 0;
+	font-family: Helvetica, sans-serif;
+	color: #f2f2ff;
+}
+
+.tech-bubble {
+	display: inline-block;
+	padding: 4px 10px;
+	padding-left: calc(1.1em + 15px);
+	text-wrap: nowrap;
+	font-size: 0.75rem;
+	height: 1.1em;
+	border-radius: 1.1em;
+	background-color: #274C6B;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	margin: 0 0.25em 0.25em 0.25em;
+	position: relative;
+}
+.bb-none {
+	padding-left: 10px;
+}
+.tech-bubble:not(.bb-none)::before {
+	content: '';
+	display: inline-block;
+	position: absolute;
+	width: calc(1.1em + 8px);
+	height: calc(1.1em + 8px);
+	top: 0;
+	left: 0;
+	border-radius: 50%;
+	background-color: #ffeeff;
+	background-size: contain;
+	vertical-align: middle;
+}
+
+.bb-haskell {
+	background-color: #5F5287;
+}
+.bb-haskell::before {
+	background-image: url(img/haskell-bubble.png);
+}
+.bb-java {
+	background-color: #F88300;
+}
+.bb-java::before {
+	background-image: url(img/java-bubble.png);
+}
+.bb-js {
+	background-color: #C17F03;
+}
+.bb-js::before {
+	background-image: url(img/js-bubble.png);
+}
+.bb-json::before {
+	background-image: url(img/json-bubble.png);
+}
+.bb-web {
+	background-color: #E75727;
+}
+.bb-web::before {
+	background-image: url(img/web-bubble.png);
+}
+.bb-py {
+	background-color: #4280B2;
+}
+.bb-py::before {
+	background-image: url(img/py-bubble.png);
+}
+.bb-php {
+	background-color: #3F4A89;
+}
+.bb-php::before {
+	background-image: url(img/php-bubble.png);
+}
+.bb-db::before {
+	background-image: url(img/db-bubble.png);
+}
+.bb-http {
+	background-color: #48B1EA;
+}
+.bb-http::before {
+	background-image: url(img/http-bubble.png);
+}
+.bb-sys {
+	background-color: #007E1C;
+}
+.bb-sys::before {
+	background-image: url(img/sys-bubble.png);
+}
+.bb-kotlin {
+	background: linear-gradient(45deg, #8050FE 0%, #E3455D 100%);
+}
+.bb-kotlin:before {
+	background-image: url(img/kotlin-bubble.png);
+}
+.bb-android {
+	background-color: #319F49;
+}
+.bb-android:before {
+	background-image: url(img/android-bubble.png);
+}
+.bb-aws:before {
+	background-image: url(img/aws-bubble.png);
+}

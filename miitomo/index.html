@@ -1,0 +1,102 @@
+<html>
+
+<head>
+
+<title>Miitomo Archive - Portfolio</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+
+<link href="../global.css" rel="stylesheet" />
+<link href="../detailsheet.css" rel="stylesheet" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+#external {
+	background-color: #FF9922;
+	border-color: #884400;
+}
+
+#external:active {
+	background-color: #884400;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="../index.html"><div id="nav-back">
+	<div id="back-button"></div><div id="back-label"><span>back to home</span></div>
+</div></a>
+
+<div id="footer">by Jason Moore<div class="vbreak"></div><a href="../index.html">home page</a></div>
+
+<div id="parallax-wrap">
+
+	<div id="video-wrap" class="parallax">
+		<video autoplay loop muted id="back-video"></video>
+		<script>
+			const vid = document.getElementById('back-video');
+			vid.src = 'backvid-' + (matchMedia( '(min-width: 900px)' ).matches ? '1920' : '854') + 'w.mp4';
+			vid.addEventListener('loadeddata', () => vid.play()); // start on load
+		</script>
+	</div>
+	
+	<div id="content-wrap" class="parallax">
+		<div id="title">Miitomo Archive</div>
+		<div id="content">
+			<a href="archive/index.html" target="_blank">
+				<button id="external">View Archive</button></a>
+			<div id="column-flex-wrap">
+				<div id="about" class="column"><div class="header">Description</div>
+					<p>Miitomo was a social app by Nintendo where the user answers questions to share with friends. It shut down due to a dwindling user base, and took down all user-generated content with it.</p>
+					<p>Before the app closed, I took screen recordings of over a thousand questions and reply threads created between my family and I, with the plan to one day save the data.</p>
+					<p>By writing custom tools that processed the recordings frame by frame to extract, organize, and sanitize the data, I managed to immortalize our Miitomo memories.</p>
+					<p>Finally, to provide a convenient way to browse the archived content, I designed a web application with a filtered search tool and a polished UI reminiscent of the original app.</p>
+					<p style="margin-top:2em;font-style:italic;font-size:0.75rem;">
+						Note: the demo linked above is a static page with the database embedded in JavaScript, whereas the original project used asynchronous requests to retrieve content from a server database.</p>
+					</div>
+				<div id="tech-stack" class="column"><div class="header">Technology</div>
+					<div id="inline-bubble-row">
+						<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-py">Python</div><div class="tech-bubble bb-js">JavaScript</div><div class="tech-bubble bb-web">HTML/CSS</div><div class="tech-bubble bb-php">PHP</div><div class="tech-bubble bb-db">Database</div><div class="tech-bubble bb-none">OCR</div>
+					</div>
+					<ul id="tech-list">
+						<li>The main image processing scripts responsible for reading, manipulating, and outputting images were written in Java using <pre>ImageIO</pre> and <pre>BufferedImage</pre>.</li>
+						<li>Python was useful for writing scripts to process and sanitize text data in batch operations.</li>
+						<li>JavaScript provides the connection between the front and back ends, sending internal requests for data and creating DOM elements to display the results.</li>
+						<li>Careful detail went into the page layout and design to recreate the look and feel of the Miitomo app.</li>
+						<li>Server-side, PHP scripts are responsible for sending database queries to retrieve and respond with filtered data.</li>
+						<li>A MySQL database stores and manages the relationships between questions, answers, and replies.</li>
+						<li>Utilizing OCR technology to extract text from the processed images was a crucial step in compiling clean data.</li>
+					</ul>
+					</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+<script>
+
+document.getElementById('inline-bubble-row').childNodes.forEach((child, index) => {
+												const f = () => toggleHighlight(index);
+												child.addEventListener('mouseenter', f);
+												child.addEventListener('mouseleave', f);
+											});
+
+// 1-indexed
+function toggleHighlight(num) {
+	const li = document.getElementById('tech-list').querySelector(`li:nth-child(${num})`);
+	if (li.classList.contains('highlight'))
+		li.classList.remove('highlight');
+	else
+		li.classList.add('highlight');
+}
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,82 @@
+<html>
+
+<head>
+
+<title>Minesweeper Rewritten - Portfolio</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+
+<link href="../global.css" rel="stylesheet" />
+<link href="../detailsheet.css" rel="stylesheet" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+<body>
+
+<a href="../index.html"><div id="nav-back">
+	<div id="back-button"></div><div id="back-label"><span>back to home</span></div>
+</div></a>
+
+<div id="footer">by Jason Moore<div class="vbreak"></div><a href="../index.html">home page</a></div>
+
+<div id="parallax-wrap">
+
+	<div id="video-wrap" class="parallax">
+		<video autoplay loop muted id="back-video"></video>
+		<script>
+			const vid = document.getElementById('back-video');
+			vid.src = 'backvid-' + (matchMedia( '(min-width: 900px)' ).matches ? '1920' : '854') + 'w.mp4';
+			vid.addEventListener('loadeddata', () => vid.play()); // start on load
+		</script>
+	</div>
+	
+	<div id="content-wrap" class="parallax">
+		<div id="title">Minesweeper Rewritten</div>
+		<div id="content">
+			<a href="https://github.com/jasonamoore/minesweeper" target="_blank">
+				<button id="external" class="git">View on GitHub</button></a>
+			<div id="column-flex-wrap">
+				<div id="about" class="column"><div class="header">Description</div>
+					<p>I'm a longtime fan of the classic Minesweeper game, and since Windows no longer comes packaged with it, I challenged myself to recreate the game in one sitting.</p>
+					<p>After getting the base game implemented, I added animations, particles, and sound effects to give the game some extra flair. Otherwise, it's plain old Minesweeper.</p>
+					<p>(If you manage to clear a big pocket, watch out for the flying worm!)</p>
+				</div>
+				<div id="tech-stack" class="column"><div class="header">Technology</div>
+					<div id="inline-bubble-row">
+						<div class="tech-bubble bb-java">Java</div><div class="tech-bubble bb-sys">Multithreading</div><div class="tech-bubble bb-sys">Graphics</div>
+					</div>
+					<ul id="tech-list">
+						<li>The game was programmed entirely from scratch in Java using various built-in Java libraries.</li>
+						<li>This project requires diligent use of multithreading to simultaneously perform game logic, render the screen, and handle user input while balancing performance.</li>
+						<li>Minesweeper Rewritten uses Java's <pre>Graphics2D</pre> library alongside <pre>AWT</pre> to render custom graphics in a native window.</li>
+					</ul>
+					</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+<script>
+
+document.getElementById('inline-bubble-row').childNodes.forEach((child, index) => {
+												const f = () => toggleHighlight(index);
+												child.addEventListener('mouseenter', f);
+												child.addEventListener('mouseleave', f);
+											});
+
+// 1-indexed
+function toggleHighlight(num) {
+	const li = document.getElementById('tech-list').querySelector(`li:nth-child(${num})`);
+	if (li.classList.contains('highlight'))
+		li.classList.remove('highlight');
+	else
+		li.classList.add('highlight');
+}
+
+</script>
+
+</body>
+
+</html>

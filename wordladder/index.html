@@ -1,0 +1,84 @@
+<html>
+
+<head>
+
+<title>Word Ladder - Portfolio</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+
+<link href="../global.css" rel="stylesheet" />
+<link href="../detailsheet.css" rel="stylesheet" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+<body>
+
+<a href="../index.html"><div id="nav-back">
+	<div id="back-button"></div><div id="back-label"><span>back to home</span></div>
+</div></a>
+
+<div id="footer">by Jason Moore<div class="vbreak"></div><a href="../index.html">home page</a></div>
+
+<div id="parallax-wrap">
+
+	<div id="video-wrap" class="parallax">
+		<video autoplay loop muted id="back-video"></video>
+		<script>
+			const vid = document.getElementById('back-video');
+			vid.src = 'backvid-' + (matchMedia( '(min-width: 900px)' ).matches ? '1920' : '854') + 'w.mp4';
+			vid.addEventListener('loadeddata', () => vid.play()); // start on load
+		</script>
+	</div>
+	
+	<div id="content-wrap" class="parallax">
+		<div id="title">Word Ladder</div>
+		<div id="content">
+			<a href="https://github.com/jasonamoore/word-ladder" target="_blank">
+				<button id="external" class="git">View on GitHub</button></a>
+			<div id="column-flex-wrap">
+				<div id="about" class="column"><div class="header">Description</div>
+					<p>Word Ladder is an Android app inspired by daily word games like Wordle. Each day the app loads a new challenge consisting of a starting word and target word. </p>
+					<p>From the starting word, the player must reach the target word by changing one letter at a time, or rearranging all four, to create new words.</p>
+					<p>The player is scored by how few steps they take, and they can view the scoreboard to see how other players performed.</p>
+				</div>
+				<div id="tech-stack" class="column"><div class="header">Technology</div>
+					<div id="inline-bubble-row">
+						<div class="tech-bubble bb-kotlin">Kotlin</div><div class="tech-bubble bb-android">Android</div><div class="tech-bubble bb-http">Retrofit</div><div class="tech-bubble bb-aws">AWS</div><div class="tech-bubble bb-php">PHP</div>
+					</div>
+					<ul id="tech-list">
+						<li>Word Ladder was developed with Kotlin, taking advantage of its functional language features and concise syntax to cut down on boilerplate code.</li>
+						<li>Building this app provided in-depth experience with the Android ecosystem as well as general patterns of mobile development across operating systems.</li>
+						<li>Retrofit and other REST API libraries were utilized to download daily challenges and post scores to the scoreboard.</li>
+						<li>A web server hosted through AWS acted as the endpoint for the app's API calls.</li>
+						<li>On the server, PHP scripts handled GET and POST requests for daily challenges and score submission.</li>
+					</ul>
+					</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+<script>
+
+document.getElementById('inline-bubble-row').childNodes.forEach((child, index) => {
+												const f = () => toggleHighlight(index);
+												child.addEventListener('mouseenter', f);
+												child.addEventListener('mouseleave', f);
+											});
+
+// 1-indexed
+function toggleHighlight(num) {
+	const li = document.getElementById('tech-list').querySelector(`li:nth-child(${num})`);
+	if (li.classList.contains('highlight'))
+		li.classList.remove('highlight');
+	else
+		li.classList.add('highlight');
+}
+
+</script>
+
+</body>
+
+</html>

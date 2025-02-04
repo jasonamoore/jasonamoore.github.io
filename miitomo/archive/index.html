@@ -1,0 +1,83 @@
+<html>
+
+<head>
+
+<title>Miitomo Archive</title>
+<link rel="icon" type="image/x-icon" href="mii.ico">
+
+<link rel="stylesheet" href="style.css">
+
+<script src="tinker.js"></script>
+
+<script type="importmap">
+  { "imports": {
+      "querier": "./querier.js",
+      "database": "./database.js"
+  } }
+</script>
+
+<script type="module" src="runner.js"></script>
+
+</head>
+
+<body onload="">
+
+	<div id="wrapper">
+	
+		<div id="help" onclick="toggleHelp()">
+			<div id="help-text" onmouseleave="toggleHelp()"><ul><li>This is a project created by Jason Moore.</li>
+			<li>Miitomo was an app created by Nintendo and released in March 2016. The premise of the app was to answer questions and view your friends' answers, like a micro-social platform.</li>
+			<li>The app shut down in 2018 due to a dwindling user base, taking down all user-generated content with it. This included questions and answers as well as "Miifotos" made using the in-app image creator.</li>
+			<li>Being 15 at the time, I devised a plan to screen record as much of the data as I could, leaving future me to learn the skills needed to somehow extract and archive this information.</li>
+			<li>Years later, I did it! I wrote custom image processing algorithms in Java with OCR technology to extract text, and designed a full-stack web app to simulate the look and feel of the app while you browse the archive. Enjoy!</div>
+		</div>
+
+		<div id="left-collapser" onclick="toggleLeftBar();"></div>
+		<div id="left-bar">
+			<div id="form-wrap"><form id="filter-form">
+				<div style="font-size: 2em;line-height: 2;">Filters</div>
+				<label class="id-holder"><span>Question or Answer ID</span><br/>
+					<input style="margin-right: 10%" type="text" name="question_id"
+						size="5" min="0" max="1102" placeholder="QID"
+						oninput="this.nextElementSibling.value = ''" />
+					or
+					<input style="margin-left: 10%" type="text" name="answer_id"
+						size="5" min="0" max="1750" placeholder="AID"
+						oninput="this.previousElementSibling.value = ''" />
+				</label><br/>
+				<label>Author<br/><input type="text" name="author" size="10"></label><br/>
+				<label class="errorable"><span id="timespan">Time range</span><br/>
+					<input id="start_date" type="date" name="start_date" oninput="validDate()"/>
+					 to 
+					<input id="end_date" type="date" name="end_date" oninput="validDate()"/>
+				</label><br/>
+				<label>Question text<br/><input class="full" type="text" name="question_text" /></label><br/>
+				<label>Answer text<br/><input class="full" type="text" name="answer_text" /></label><br/>
+				<label>Likes<div class="range-wrap"><input type="range" class="slider" name="likes" value="-1" min="-1" max="3"
+					oninput="this.nextElementSibling.textContent = this.value >= 0 ? this.value : '-'" /><span>-</span></div></label><br/>
+				<label>Replies<div class="range-wrap"><input type="range" class="slider" name="replies" value="-1" min="-1" max="9"
+					oninput="this.nextElementSibling.textContent = this.value >= 0 ? this.value : '-'" /><span>-</span></div></label><br/>
+				<label>Total answers<div class="range-wrap"><input type="range" class="slider" name="total_answers" value="0" min="0" max="3"
+					oninput="this.nextElementSibling.textContent = this.value > 0 ? this.value : '-'" /><span>-</span></div></label><br/>
+				<label>Contains image  <input type="checkbox" name="has_image" /></label>
+				<div id="search-wrap"><button type="button" id="search">Search</button></div>
+			</form></div>
+		</div>
+		
+		<div id="right-bar">
+
+			<div id="column">
+			
+				<div id="feed-wrap">Search to get started!</div>
+			
+			</div>
+			
+		</div>
+		
+		<div><!--dummy--></div>
+
+	</div>
+
+</body>
+
+</html>
